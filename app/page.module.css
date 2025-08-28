@@ -1,0 +1,17 @@
+.main {
+  color: black;
+  text-align: center;
+  padding: 40px;
+  font-size: xx-large;
+}
+.Start {
+  position: absolute;
+  left: 450px;   /* distance from left edge of page */
+  top: 225px;   /* vertical position */
+}
+
+.Browse {
+  position: absolute;
+  right: 425px;  /* distance from right edge of page */
+  top: 225px;   /* same vertical position as Start */
+}

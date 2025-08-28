@@ -1,0 +1,65 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 40px;
+  background-color: #323A5D;
+  height: 70px;
+  color: white;
+}
+.links a:first-child{
+  position: absolute;
+  right: 500px;
+}
+.links a:nth-child(2){
+  position:absolute;
+  right: 350px;
+}
+.links a:nth-child(3){
+  position: absolute;
+  right: 200px;
+}
+.links a:nth-child(4) {
+  position: absolute;
+  right: 50px; /* adjust this value to match your layout */
+}
+.links a {
+  position: relative; /* keep current layout */
+  top: -11.5px; /* moves link up by 5px */
+}
+
+.links {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  left: 300px;
+  margin-left: 500px;
+  display: flex;
+  gap: 200px;
+}
+
+.actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.Search{
+  position: relative;
+  right: -125px;
+  text-indent: 20px;
+  width: 300px;
+  padding: 5px;
+  border-radius: 70px;
+  font-size: 16px;
+  color: black;
+  background-color: rgba(255, 255, 255, 0.205); 
+}
+.Login{
+  position: relative;
+  right: 25px;
+}
+.logo{
+  height: 100px;
+  width: 100px;
+}

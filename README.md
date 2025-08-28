@@ -1,3 +1,4 @@
+cat > README.md << 'EOF'
 # 🚀 SmartCode
 
 SmartCode is a web app that helps beginners learn multiple programming languages interactively. Users can write code in the browser, run exercises, and receive AI-powered feedback to improve their solutions.
