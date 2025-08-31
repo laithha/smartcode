@@ -24,6 +24,7 @@ export default function Navbar() {
       <div className={styles.Login}>
         <a href="">Login</a>
       </div>
+      
     </nav>
   )
 }

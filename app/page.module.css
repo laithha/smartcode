@@ -1,17 +1,141 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 .main {
   color: black;
   text-align: center;
   padding: 40px;
   font-size: xx-large;
+  font-family: 'JetBrains Mono', monospace;
 }
 .Start {
   position: absolute;
   left: 450px;   /* distance from left edge of page */
-  top: 225px;   /* vertical position */
+  top: 225px; 
+  font-family: 'JetBrains Mono', monospace;  /* vertical position */
 }
 
 .Browse {
   position: absolute;
   right: 425px;  /* distance from right edge of page */
-  top: 225px;   /* same vertical position as Start */
+  top: 225px;  
+  font-family: 'JetBrains Mono', monospace; /* same vertical position as Start */
+}
+
+
+.leftbox {
+  position: relative;
+  left: 370px;
+  top: 50px;
+  width: 400px;
+  height: 300px;
+  padding: 20px;
+  border: 2px solid black;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 30px;
+  color: black;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.leftText{
+  position: relative;
+  top: 20px;
+}
+ .rightbox {
+  position: relative;
+  left: 1150px;
+  top: -250px;
+  width: 400px;
+  height: 300px;
+  padding: 20px;
+  border: 2px solid black;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 30px;
+  color: black;
+  font-family: 'JetBrains Mono', monospace;
+}
+.rightText{
+  position: relative;
+  top: 20px;
+  left: 15px;
+  font-family: 'JetBrains Mono', monospace;
+} 
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 50px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.card {
+  background: #f0f8ff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  color: black;
+  font-family: 'JetBrains Mono', monospace;
+
+}
+.card:nth-child(1){
+  position: relative;
+  background: #E6F3FF;
+  right: 150px;
+  bottom: 200px;
+  width: 300px;
+  height: 250px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.card:nth-child(2) {
+  background: #F0F9FF;
+  position: relative;
+  right: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  bottom: 200px;
+}
+.card:nth-child(3) {
+  background: #E1D9FF;
+  position: relative;
+  bottom: 200px;
+  left: 150px;
+  font-family: 'JetBrains Mono', monospace;
+
+}
+.icon {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 10px;
+  font-family: 'JetBrains Mono', monospace;
+
+}
+
+.text1{
+  color: black;
+  font-size: x-large;
+  position: absolute;
+  left: 650px;
+}
+.line {
+  color: black;
+  width: 100%;
+  height: 2px; 
+  background-color: black; 
+  margin-top: 20px;
+}
+
+.footer {
+  display: flex;
+  position: relative;
+  bottom: 20px;
+  justify-content: center;
+  gap: 60px; 
+  color: black;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  margin-top: 10px; /* space between footer and line */
+}
+
+.contact, .privacy, .terms {
+  font-size: inherit;
 }
