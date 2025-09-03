@@ -9,22 +9,22 @@
 .Start {
   position: absolute;
   left: 450px;   /* distance from left edge of page */
-  top: 225px; 
+  top: 275px; 
   font-family: 'JetBrains Mono', monospace;  /* vertical position */
 }
 
 .Browse {
   position: absolute;
-  right: 425px;  /* distance from right edge of page */
-  top: 225px;  
-  font-family: 'JetBrains Mono', monospace; /* same vertical position as Start */
+  right: 425px;  
+  top: 275px;  
+  font-family: 'JetBrains Mono', monospace; 
 }
 
 
 .leftbox {
   position: relative;
   left: 370px;
-  top: 50px;
+  top: 150px;
   width: 400px;
   height: 300px;
   padding: 20px;
@@ -43,7 +43,7 @@
  .rightbox {
   position: relative;
   left: 1150px;
-  top: -250px;
+  top: -150px;
   width: 400px;
   height: 300px;
   padding: 20px;
@@ -82,7 +82,7 @@
   position: relative;
   background: #E6F3FF;
   right: 150px;
-  bottom: 200px;
+  bottom: 125px;
   width: 300px;
   height: 250px;
   font-family: 'JetBrains Mono', monospace;
@@ -92,12 +92,12 @@
   position: relative;
   right: 10px;
   font-family: 'JetBrains Mono', monospace;
-  bottom: 200px;
+  bottom: 125px;
 }
 .card:nth-child(3) {
   background: #E1D9FF;
   position: relative;
-  bottom: 200px;
+  bottom: 125px;
   left: 150px;
   font-family: 'JetBrains Mono', monospace;
 

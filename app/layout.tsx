@@ -1,18 +1,17 @@
-import './globals.css'; // global styles
+import './globals.css';
 import Navbar from '../components/navbar';
 
 export const metadata = {
-  title: 'My Website',
-  description: 'A Next.js app',
+  title: 'SmartCode',
+  description: 'Learning platform',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-            <Navbar />
-
-        {children}
+        <Navbar />
+        <main>{children}</main>
       </body>
     </html>
   );
