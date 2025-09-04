@@ -1,7 +1,7 @@
-.levelRectangle {
+.languageRectangle {
   position: relative;
   background-color: #D9D9D9;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 15px 20px;
   min-width: 300px;
   max-width: 400px;
@@ -10,32 +10,36 @@
   align-items: center;
   margin-bottom: 20px;
   font-family: 'JetBrains Mono', monospace;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-.levelSelect {
+.languageSelect {
   width: 100%;
-  padding: 10px 15px;
+  padding: 8px 12px;
   border: none;
-  border-radius: 10px;
-  background-color: #E0E0E0; /* lighter shade for select */
+  border-radius: 5px;
+  background-color: #D9D9D9;
   color: #000;
-  appearance: none; /* remove default arrow */
+  appearance: none;
   cursor: pointer;
   outline: none;
   font-size: 16px;
   font-family: 'JetBrains Mono', monospace;
-  padding-right: 40px; /* space for custom arrow */
+  padding-right: 30px;
 }
 
+.languageOption {
+  background-color: #D9D9D9;
+  color: #000;
+  font-family: 'JetBrains Mono', monospace;
+}
 
 .customArrow {
   position: absolute;
-  right: 20px;
+  right: 15px;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-top: 7px solid #000;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #000;
 }

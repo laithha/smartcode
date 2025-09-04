@@ -8,74 +8,51 @@
   color: white;
   font-family: 'JetBrains Mono', monospace;
 }
-.links a:first-child{
-  position: absolute;
-  right: 500px;
-  font-family: 'JetBrains Mono', monospace;
-}
-.links a:nth-child(2){
-  position:absolute;
-  right: 350px;
-  font-family: 'JetBrains Mono', monospace;
-}
-.links a:nth-child(3){
-  position: absolute;
-  right: 200px;
-  font-family: 'JetBrains Mono', monospace;
-}
-.links a:nth-child(4) {
-  position: absolute;
-  right: 50px;
-  font-family: 'JetBrains Mono', monospace; /* adjust this value to match your layout */
-}
-.links a {
-  position: relative; /* keep current layout */
-  top: -11.5px; 
-  font-family: 'JetBrains Mono', monospace;/* moves link up by 5px */
-}
 
-.links {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  left: 300px;
-  margin-left: 500px;
-  display: flex;
-  gap: 200px;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.actions {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.Search{
-  position: relative;
-  right: -125px;
-  text-indent: 20px;
-  width: 300px;
-  padding: 5px;
-  border-radius: 70px;
-  font-size: 16px;
-  color: black;
-  background-color: rgba(255, 255, 255, 0.205); 
-  font-family: 'JetBrains Mono', monospace;
-  padding: 6px 10px;
-  font-family: 'JetBrains Mono', monospace;
-}
-.Search:focus {
-  outline: none;   /* removes the browser default focus border */
-}
-.Login{
-  position: relative;
-  right: 25px;
-  font-family: 'JetBrains Mono', monospace;
-}
-.logo{
+/* Logo */
+.logo img {
   height: 100px;
   width: 100px;
-  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Links container: centered with increased gap */
+.links {
+  display: flex;
+  gap: 80px; /* increased gap */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+
+/* Links styling */
+.links a {
+  font-size: 16px;
+  color: white;
+  text-decoration: none;
+}
+
+/* Login */
+.Login a {
+  font-size: 16px;
+  color: white;
+  text-decoration: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .links {
+    gap: 60px; /* slightly smaller on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .links {
+    position: static;
+    transform: none;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px; /* smaller gap for small screens */
+    margin-top: 10px;
+  }
 }

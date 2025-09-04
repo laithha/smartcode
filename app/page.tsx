@@ -1,6 +1,6 @@
 import Navbar from '../components/navbar'  
 import styles from './page.module.css'
-
+import {Lesson} from '../type'
 export default function Page() {
     return (
         <div>

@@ -1,16 +1,20 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import LevelSelector from '../../components/levelSelector';
+import LanguageSelector from '@/components/languageselector';
+import { Lesson } from '../../type';
+import styles from './page.module.css';
 
 export default function LessonsPage() {
-  const [lessons, setLessons] = useState<any[]>([]);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('http://localhost:1337/api/lessons')
       .then(res => res.json())
       .then(data => {
-        setLessons(data?.data || []);
+        setLessons(data?.data as Lesson[]);
         setLoading(false);
       })
       .catch(err => {
@@ -20,46 +24,31 @@ export default function LessonsPage() {
       });
   }, []);
 
-  if (loading) return <p style={{ padding: '20px' }}>Loading lessons...</p>;
+  if (loading) {
+    return <p className={styles.container}>Loading lessons...</p>;
+  }
 
   return (
-    <div style={{ padding: '20px', overflowX: 'hidden' }}>
-      <h1 style={{ color: 'black', textAlign: 'center', marginBottom: '20px', fontSize:'xx-large', }}>All Lessons</h1>
+    <div className={styles.container}>
+      <h1 className={styles.pageTitle}>All Lessons</h1>
 
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div className={styles.selectorWrapper}>
         <LevelSelector />
+        <LanguageSelector />
       </div>
 
       {lessons.length === 0 && <p>No lessons found.</p>}
 
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '20px',
-          justifyContent: 'center', // center cards
-        }}
-      >
-        {lessons.map((l: any) => (
-          <div
-            key={l.id}
-            style={{
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              padding: '15px',
-              width: '300px',
-              minHeight: '200px',
-              backgroundColor: '#f5f5f5',
-              color: '#000',
-              boxSizing: 'border-box',
-            }}
-          >
-            <h2 style={{ fontSize: '18px', marginBottom: '5px' }}>{l.Title}</h2>
-            <p style={{ fontSize: '14px', marginBottom: '10px' }}>{l.Description}</p>
-            <p>⭐ {l.Level}</p>
-            <p>⏱ {l.Duration} min</p>
-            <p>{l.Completed ? '✅ Completed' : '❌ Not Completed'}</p>
-          </div>
+      <div className={styles.lessonsGrid}>
+        {lessons.map((l) => (
+          <Link key={l.id} href={`/lessons/${l.id}`}>
+            <div className={styles.lessonCard}>
+              <h2>{l.Title}</h2>
+              <p>{l.Description}</p><br></br>
+              <p>⭐ {l.Level}</p><br></br>
+              <p>⏱ {l.Duration} min</p><br></br>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

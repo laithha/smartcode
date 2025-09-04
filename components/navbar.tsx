@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import styles from './navbar.module.css';
+import styles from './Navbar.module.css';
 import logo from "../app/logo.png";
 
 export default function Navbar() {
@@ -17,14 +17,9 @@ export default function Navbar() {
         <a href="">About</a>
       </div>
 
-      <div className={styles.Search}>
-        <input type="text" placeholder="Search.." />
-      </div>
-
       <div className={styles.Login}>
         <a href="">Login</a>
       </div>
-      
     </nav>
-  )
+  );
 }
