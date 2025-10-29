@@ -22,7 +22,7 @@ services:
     image: migrate/migrate:v4.17.0
     container_name: thesis-migrate-container
     volumes: 
-      - "./db/migrations:/migrations"
+      - "./app/api/database/migrations:/migrations"
     command: [
       "-path", "/migrations",
       "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-service:5432/${POSTGRES_DB}?sslmode=disable",
