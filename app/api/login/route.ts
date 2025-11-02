@@ -1,30 +1,25 @@
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
-
-
-const prisma = new PrismaClient();
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
+    const HARDCODED_EMAIL = "laithhaj4@gmail.com";
+    const HARDCODED_PASSWORD = "laithhaj0220";
+
     const { email, password } = await req.json();
 
-    const user = await prisma.users.findUnique({ where: { email } });
-
-    if (!user) {
-      return Response.json({ error: "User not found" }, { status: 404 });
+    if (email === HARDCODED_EMAIL && password === HARDCODED_PASSWORD) {
+      return NextResponse.json({
+        message: "Login successful",
+        user: { id: 1, email: HARDCODED_EMAIL },
+      });
+    } else {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
     }
-
-    const isValid = await bcrypt.compare(password, user.password_hash);
-    if (!isValid) {
-      return Response.json({ error: "Invalid password" }, { status: 401 });
-    }
-
-    return Response.json({
-      message: "Login successful",
-      user: { id: user.id, email: user.email },
-    });
   } catch (err) {
     console.error(err);
-    return Response.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
