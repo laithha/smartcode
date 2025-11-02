@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import styles from './Navbar.module.css';
-import logo from "../app/logo.png";
+import logo from "../../../logo.png";
 
 export default function Navbar() {
   return (
@@ -18,7 +18,7 @@ export default function Navbar() {
       </div>
 
       <div className={styles.Login}>
-        <a href="">Login</a>
+        <a href="/web/login">Login</a>
       </div>
     </nav>
   );
