@@ -20,3 +20,9 @@ Through the web app, learners can:
 🚀 Improve their skills with feedback and hints for every exercise.
 📊 Track their learning progress — users can view their achievements, completed lessons, and overall progress in the Progress Page.
 The goal is to make learning how to code easy, fun, and accessible for everyone — especially beginners.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+how it looks 
+<img width="1919" height="993" alt="image" src="https://github.com/user-attachments/assets/6b7a9865-d6b0-4ad1-837d-67ba4559654f" />
+
+<img width="1918" height="994" alt="image" src="https://github.com/user-attachments/assets/7ca56c8b-e60a-46df-bf0b-be640c3ae0a2" />
+
