@@ -2,23 +2,21 @@
 
 SmartCode is a web app that helps beginners learn multiple programming languages interactively. Users can write code in the browser, run exercises, and receive AI-powered feedback to improve their solutions.
 
+💡 HOW IT WORKS
 
-## ✨ Features
+This app helps beginners learn and practice coding languages.
+It includes interactive lessons that explain each topic clearly, with examples and small exercises that guide users step by step through programming concepts.
 
-- 🌐 Multi-language support (Python, JavaScript, C++, etc.)  
-- 📝 Interactive coding exercises with live submissions  
-- 🤖 AI-powered solution comparison  
-  - 🆚 Side-by-side view of user vs AI solution  
-  - 🔍 Highlights differences and mistakes  
-  - 💡 Feedback and improvement tips  
-- 🎨 Clean, modern UI for coding practice
-
- 🛠 How It Works
-
-1. Users submit code for an exercise 🖊️  
-2. AI generates its own solution 🤖  
-3. Comparison page shows:  
-   - 👤 User’s solution  
-   - 🤖 AI solution  
-   - 💡 Advice on logic, efficiency, and best practices from AI.
-4. Tips help users understand mistakes and improve coding style ✅.
+Through the web app, learners can:
+📘 Read lessons that explain programming concepts like:
+🧩 What are variables and how to use them
+➕ Basic operations and data types
+🔁 Loops (for, while)
+✅ Conditional statements (if, else)
+📦 Functions and how to reuse code
+📂 Objects, arrays, and real examples
+💻 Practice coding directly in the browser by solving short exercises after each lesson.
+🧠 Learn through examples that explain how code works step by step.
+🚀 Improve their skills with feedback and hints for every exercise.
+📊 Track their learning progress — users can view their achievements, completed lessons, and overall progress in the Progress Page.
+The goal is to make learning how to code easy, fun, and accessible for everyone — especially beginners.
