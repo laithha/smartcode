@@ -1,6 +1,7 @@
 import Navbar from './web/components/navbar/navbar'  
 import styles from './page.module.css'
 import {Lesson} from '../type'
+
 export default function Page() {
     return (
         <div>
@@ -26,7 +27,6 @@ export default function Page() {
                 <p>{'}'}</p>
                 </div>
             </div>
-                    
       <div className={styles.features}>
         <div className={styles.card}>
           <span className={styles.icon}>{"< >"}</span>
