@@ -114,3 +114,23 @@ button:hover {
     text-align: left;
   }
 }
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+h2 {
+  text-align: center;
+  width: 100%;
+}
+
+form {
+  width: 100%;
+}
+
+input,
+button {
+  box-sizing: border-box;
+}

@@ -1,25 +1,52 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { Pool } from "pg";
 
-export async function POST(req: Request) {
+const pool = new Pool({
+  user: "admin",
+  host: "localhost",
+  database: "db_smartcode",
+  password: "admin",
+  port: 5432,
+});
+
+export async function POST(req: NextRequest) {
   try {
-    const HARDCODED_EMAIL = "laithhaj4@gmail.com";
-    const HARDCODED_PASSWORD = "laithhaj0220";
-
     const { email, password } = await req.json();
 
-    if (email === HARDCODED_EMAIL && password === HARDCODED_PASSWORD) {
-      return NextResponse.json({
-        message: "Login successful",
-        user: { id: 1, email: HARDCODED_EMAIL },
-      });
-    } else {
+    if (!email || !password) {
       return NextResponse.json(
-        { error: "Invalid email or password" },
+        { message: "Email and password are required" },
+        { status: 400 }
+      );
+    }
+
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return NextResponse.json(
+        { message: "Account not found" },
         { status: 401 }
       );
     }
+
+    const user = result.rows[0];
+
+    if (user.password_hash !== password) {
+      return NextResponse.json(
+        { message: "Incorrect password" },
+        { status: 401 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Login successful", user: { id: user.id, email: user.email } },
+      { status: 200 }
+    );
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    console.error("Login error:", err);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }

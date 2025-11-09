@@ -5,36 +5,38 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (password !== confirm) {
+      toast.error("Passwords do not match");
+      return;
+    }
     setLoading(true);
-
-    const res = await fetch("/api/login", {
+    const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-
     const data = await res.json();
     setLoading(false);
 
     if (!res.ok) {
-      toast.error(data.message || "Invalid email or password");
+      toast.error(data.message || "Error creating account");
       return;
     }
 
-    toast.success("Login successful");
+    toast.success("Account created");
     setDone(true);
-
-    setTimeout(() => router.replace("/"), 700);
-  };
+    setTimeout(() => router.push("/web/login"), 700);
+  }
 
   return (
     <div className="login-bg">
@@ -44,10 +46,10 @@ export default function LoginForm() {
         animate={{ opacity: done ? 0 : 1, y: done ? -10 : 0 }}
         transition={{ duration: 0.35 }}
       >
-        <h2>Welcome back</h2>
+        <h2>Create your account</h2>
         <form onSubmit={handleSubmit}>
           <input
-            type="text"
+            type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -58,12 +60,17 @@ export default function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <p className="forgot">Forgot password?</p>
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
           <button type="submit" disabled={loading}>
-            {loading ? "Signing in..." : "Login"}
+            {loading ? "Creating..." : "Sign up"}
           </button>
           <p className="signup">
-            Don’t have an account? <a href="/web/register">Click here</a>
+            Already have an account? <a href="/web/login">Login here</a>
           </p>
         </form>
       </motion.div>
