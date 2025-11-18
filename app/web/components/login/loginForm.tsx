@@ -4,7 +4,6 @@ import "./style.css";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

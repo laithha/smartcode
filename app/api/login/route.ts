@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 
@@ -31,13 +32,12 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
-
     const user = result.rows[0];
-
-    if (user.password_hash !== password) {
+    const isvalid = await bcrypt.compare(password, user.password_hash);
+    if (!isvalid){
       return NextResponse.json(
-        { message: "Incorrect password" },
-        { status: 401 }
+        {message : "incorrect password"},
+        {status : 401}
       );
     }
 

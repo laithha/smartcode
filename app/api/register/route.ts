@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Pool } from "pg"
+import bcrypt from "bcrypt";
 
 const pool = new Pool({
   user: "admin",
@@ -12,6 +13,7 @@ const pool = new Pool({
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json()
+    const hashedpassword = await bcrypt.hash(password, 10);
 
     if (!email || !password) {
       return NextResponse.json(
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     const result = await pool.query(
       "INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email",
-      [email, password]
+      [email, hashedpassword]
     )
 
     return NextResponse.json(
