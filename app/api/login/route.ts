@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
+import jwt from "jsonwebtoken";
 
 const pool = new Pool({
   user: "admin",
@@ -32,21 +33,32 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
+
     const user = result.rows[0];
+
     const isvalid = await bcrypt.compare(password, user.password_hash);
-    if (!isvalid){
+    if (!isvalid) {
       return NextResponse.json(
-        {message : "incorrect password"},
-        {status : 401}
+        { message: "Invalid credentials" },
+        { status: 401 }
       );
     }
 
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET!
+    );
+
     return NextResponse.json(
-      { message: "Login successful", user: { id: user.id, email: user.email } },
+      {
+        message: "Login successful",
+        user: { id: user.id, email: user.email },
+        token: token,
+      },
       { status: 200 }
     );
   } catch (err) {
     console.error("Login error:", err);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
-}
+} 

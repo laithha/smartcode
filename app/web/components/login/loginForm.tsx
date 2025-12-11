@@ -9,31 +9,35 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
 
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+  const data = await res.json();
+  setLoading(false);
 
-    const data = await res.json();
-    setLoading(false);
+  if (!res.ok) {
+    toast.error(data.message || "Invalid email or password");
+    return;
+  }
 
-    if (!res.ok) {
-      toast.error(data.message || "Invalid email or password");
-      return;
-    }
+  // Save the token
+  localStorage.setItem("token", data.token);
 
-    toast.success("Login successful");
-    setDone(true);
+  toast.success("Login successful");
+  setDone(true);
 
-    setTimeout(() => router.replace("/"), 700);
-  };
+  setTimeout(() => router.replace("/"), 700);
+};
+
 
   return (
     <div className="login-bg">

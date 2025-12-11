@@ -2,7 +2,11 @@
 import Link from "next/link";
 import styles from './Navbar.module.css';
 import logo from "../../../logo.png";
-
+import LoginForm from "../login/loginForm";
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "/web/login";
+}
 export default function Navbar() {
   return (
     <nav className={styles.navbar}>
@@ -15,9 +19,10 @@ export default function Navbar() {
         <a href="">Progress</a>
         <a href="">About</a>
       </div>
-      <div className={styles.Login}>
-        <a href="/web/login">Login</a>
-      </div>
+      <a href="/web/login" onClick={() => localStorage.removeItem("token")}>
+        Logout
+      </a>
+
     </nav>
   );
 }
