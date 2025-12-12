@@ -12,10 +12,16 @@ export default function RootLayout({
 }) {
   const pathname = usePathname();
   const hideNavbar =
-    pathname === "/web/login" || pathname === "/web/register";
+    pathname === "/web/login" ||
+    pathname === "/web/register" ||
+    pathname === "/web/forgot-password" ||
+    pathname === "/web/reset-password";
 
   const isAuthPage =
-    pathname === "/web/login" || pathname === "/web/register";
+    pathname === "/web/login" ||
+    pathname === "/web/register" ||
+    pathname === "/web/forgot-password" ||
+    pathname === "/web/reset-password";
 
   return (
     <html lang="en">
