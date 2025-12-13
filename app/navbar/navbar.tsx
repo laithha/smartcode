@@ -1,17 +1,17 @@
 "use client";
-import Link from "next/link";
 import styles from './Navbar.module.css';
-import logo from "../../../logo.png";
-import LoginForm from "../login/loginForm";
-function logout() {
-  localStorage.removeItem("token");
-  window.location.href = "/web/login";
-}
+import logo from "../logo.png";
+
 export default function Navbar() {
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/web/login";
+  };
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
-        <img src={logo.src} alt="logo" />
+        <img src={logo.src} alt="SmartCode" />
       </div>
       <div className={styles.links}>
         <a href="/">Home</a>
@@ -19,10 +19,9 @@ export default function Navbar() {
         <a href="">Progress</a>
         <a href="">About</a>
       </div>
-      <a href="/web/login" onClick={() => localStorage.removeItem("token")}>
+      <a href="/web/login" className={styles.logout} onClick={handleLogout}>
         Logout
       </a>
-
     </nav>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import "./globals.css";
-import Navbar from "./web/components/navbar/navbar";
+import Navbar from "./navbar/navbar";
 import { usePathname } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 
@@ -17,39 +17,22 @@ export default function RootLayout({
     pathname === "/web/forgot-password" ||
     pathname === "/web/reset-password";
 
-  const isAuthPage =
-    pathname === "/web/login" ||
-    pathname === "/web/register" ||
-    pathname === "/web/forgot-password" ||
-    pathname === "/web/reset-password";
-
   return (
     <html lang="en">
       <body
         style={{
           margin: 0,
           padding: 0,
-          overflow: "hidden",
-          height: "100vh",
-          width: "100vw",
-          backgroundColor: isAuthPage ? "transparent" : "#ffffff",
+          minHeight: "100vh",
+          width: "100%",
+          overflowX: "hidden",
         }}
       >
         {!hideNavbar && <Navbar />}
-
-        <div
-          style={{
-            height: "100vh",
-            width: "100vw",
-            display: "flex",
-            margin: 0,
-            padding: 0,
-            background: "transparent",
-          }}
-        >
+        <main style={{ width: "100%" }}>
           {children}
-          <Toaster position="top-center" />
-        </div>
+        </main>
+        <Toaster position="top-center" />
       </body>
     </html>
   );
