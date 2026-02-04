@@ -12,8 +12,8 @@ export default function HomePage() {
           Master programming fundamentals through hands-on practice
         </p>
         <div className={styles.buttons}>
-          <a href="/lessons" className={styles.primaryBtn}>Start Learning</a>
-          <a href="/lessons" className={styles.secondaryBtn}>Browse Lessons</a>
+          <a href="web/lessons" className={styles.primaryBtn}>Start Learning</a>
+          <a href="web/lessons" className={styles.secondaryBtn}>Browse Lessons</a>
         </div>
       </section>
 
@@ -47,7 +47,7 @@ export default function HomePage() {
             <p className={styles.emoji}>👩‍💻</p>
             <h3>Ready to Code?</h3>
             <p>Jump into your first lesson</p>
-            <a href="/lessons" className={styles.cardLink}>Get Started →</a>
+            <a href="web/lessons" className={styles.cardLink}>Get Started →</a>
           </div>
         </div>
 

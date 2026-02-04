@@ -1,0 +1,268 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+.lesson-page {
+    min-height: calc(100vh - 75px);
+    background: #f8f9fc;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 30px 20px;
+}
+
+.loading,
+.error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    font-size: 1.1rem;
+    color: #6b7280;
+}
+
+.error {
+    color: #ef4444;
+}
+
+.lesson-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+/* Left Side - Lesson Content */
+.lesson-content {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0e4eb;
+    padding: 30px;
+    height: fit-content;
+}
+
+.lesson-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1E2340;
+    margin-bottom: 16px;
+}
+
+.lesson-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.language-badge {
+    background: #5B4FCF;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.difficulty-badge {
+    background: #f3f4f6;
+    color: #4b5563;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.duration {
+    color: #6b7280;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+}
+
+.lesson-description {
+    padding: 20px;
+    background: #f8f9fc;
+    border-radius: 10px;
+    margin-bottom: 24px;
+}
+
+.lesson-description p {
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.lesson-body h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1E2340;
+    margin-bottom: 12px;
+}
+
+.content-text {
+    color: #4b5563;
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+
+/* Task Section */
+.lesson-task {
+    margin-top: 24px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 10px;
+    border-left: 4px solid #5B4FCF;
+}
+
+.lesson-task h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1E2340;
+    margin-bottom: 10px;
+}
+
+.task-text {
+    color: #4b5563;
+    line-height: 1.6;
+}
+
+/* AI Review Section */
+.ai-review-section {
+    margin-top: 24px;
+    padding: 20px;
+    background: #fafbfc;
+    border-radius: 10px;
+    border: 1px dashed #d1d5db;
+}
+
+.ai-review-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1E2340;
+    margin-bottom: 10px;
+}
+
+.ai-placeholder {
+    color: #9ca3af;
+    font-style: italic;
+    margin: 0;
+}
+
+/* Editor Buttons */
+.editor-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.submit-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.submit-btn:hover {
+    background: #059669;
+}
+
+/* Right Side - Editor */
+.editor-section {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0e4eb;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #1E2340;
+    border-bottom: 1px solid #2d3555;
+}
+
+.editor-header h3 {
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.run-btn {
+    background: #5B4FCF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.run-btn:hover {
+    background: #4a3fb8;
+}
+
+.run-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.editor-wrapper {
+    border-bottom: 1px solid #e0e4eb;
+}
+
+.output-section {
+    padding: 16px 20px;
+    background: #fafbfc;
+}
+
+.output-section h4 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1E2340;
+    margin: 0 0 12px 0;
+}
+
+.output-box {
+    background: #1E2340;
+    color: #10b981;
+    padding: 16px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .lesson-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .lesson-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .lesson-content {
+        padding: 20px;
+    }
+}
