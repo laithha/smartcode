@@ -127,7 +127,8 @@
 }
 
 .lesson-task {
-    display: none; /* Keep for potential unused references */
+    display: none;
+    /* Keep for potential unused references */
 }
 
 .task-text {
@@ -341,7 +342,9 @@
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .generating-text {
