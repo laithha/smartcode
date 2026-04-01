@@ -14,27 +14,18 @@ interface Lesson {
     duration: number;
 }
 
-interface GeneratedContent {
-    explanation: string;
-    problem: string;
-    example: string;
-    hints: string[];
-}
-
 export default function LessonPage() {
     const [lesson, setLesson] = useState<Lesson | null>(null);
-    const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
     const [tips, setTips] = useState<{ tip_id: number; category: string; message: string }[]>([]);
     const [code, setCode] = useState("");
     const [output, setOutput] = useState("");
     const [loading, setLoading] = useState(true);
-    const [generating, setGenerating] = useState(false);
     const [running, setRunning] = useState(false);
 
     // Collapsible section toggles
     const [showProblem, setShowProblem] = useState(false);
     const [showExample, setShowExample] = useState(false);
-    const [hintsRevealed, setHintsRevealed] = useState(0);
+    const [showHints, setShowHints] = useState(false);
 
     const { id } = useParams();
 
@@ -49,27 +40,6 @@ export default function LessonPage() {
             setTips(Array.isArray(data2) ? data2 : []);
 
             setLoading(false);
-
-            // Fetch AI-generated content
-            setGenerating(true);
-            try {
-                const aiRes = await fetch("/api/generate-lesson", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        title: data.title,
-                        language: data.language,
-                    }),
-                });
-                const aiData = await aiRes.json();
-                if (!aiData.error) {
-                    setGeneratedContent(aiData);
-                }
-            } catch (error) {
-                console.error("Failed to generate lesson content:", error);
-            } finally {
-                setGenerating(false);
-            }
         };
         fetchLesson();
     }, [id]);
@@ -156,20 +126,11 @@ export default function LessonPage() {
                         <p>{lesson.description}</p>
                     </div>
 
-                    {/* AI-Generated Explanation */}
+                    {/* Lesson Content from DB */}
                     <div className="lesson-body">
                         <h2>📖 Lesson Content</h2>
                         <div className="content-text">
-                            {generating ? (
-                                <div className="generating-loader">
-                                    <div className="spinner"></div>
-                                    <p>AI is generating your lesson content...</p>
-                                </div>
-                            ) : generatedContent ? (
-                                generatedContent.explanation
-                            ) : (
-                                lesson.content || "No content available yet."
-                            )}
+                            {lesson.content || "No content available yet."}
                         </div>
                     </div>
 
@@ -184,13 +145,7 @@ export default function LessonPage() {
                         </button>
                         {showProblem && (
                             <div className="collapsible-content">
-                                {generating ? (
-                                    <p className="generating-text">Generating problem...</p>
-                                ) : generatedContent ? (
-                                    <p>{generatedContent.problem}</p>
-                                ) : (
-                                    <p>Write code in the editor on the right to practice what you learned.</p>
-                                )}
+                                <p>Write code in the editor on the right to practice what you learned.</p>
                             </div>
                         )}
                     </div>
@@ -206,13 +161,7 @@ export default function LessonPage() {
                         </button>
                         {showExample && (
                             <div className="collapsible-content">
-                                {generating ? (
-                                    <p className="generating-text">Generating example...</p>
-                                ) : generatedContent ? (
-                                    <pre className="example-code">{generatedContent.example}</pre>
-                                ) : (
-                                    <p>No example available yet.</p>
-                                )}
+                                <p>No example available yet.</p>
                             </div>
                         )}
                     </div>
@@ -221,27 +170,14 @@ export default function LessonPage() {
                     <div className="collapsible-section">
                         <button
                             className="collapsible-header"
-                            onClick={() => setHintsRevealed(hintsRevealed === 0 ? 1 : hintsRevealed)}
+                            onClick={() => setShowHints(!showHints)}
                         >
                             <h2>💡 Hints</h2>
-                            <span className={`arrow ${hintsRevealed > 0 ? "arrow-open" : ""}`}>▶</span>
+                            <span className={`arrow ${showHints ? "arrow-open" : ""}`}>▶</span>
                         </button>
-                        {hintsRevealed > 0 && generatedContent && (
+                        {showHints && (
                             <div className="collapsible-content">
-                                {generatedContent.hints.slice(0, hintsRevealed).map((hint, index) => (
-                                    <div key={index} className="hint-card">
-                                        <span className="hint-number">Hint {index + 1}</span>
-                                        <p>{hint}</p>
-                                    </div>
-                                ))}
-                                {hintsRevealed < generatedContent.hints.length && (
-                                    <button
-                                        className="reveal-hint-btn"
-                                        onClick={() => setHintsRevealed(hintsRevealed + 1)}
-                                    >
-                                        Reveal next hint ({hintsRevealed}/{generatedContent.hints.length})
-                                    </button>
-                                )}
+                                <p>No hints available yet.</p>
                             </div>
                         )}
                     </div>
@@ -249,7 +185,7 @@ export default function LessonPage() {
                     {/* Tips from database */}
                     {tips.length > 0 && (
                         <div className="lesson-tips">
-                            <h2>� Tips</h2>
+                            <h2>💡 Tips</h2>
                             <div className="tips-text">
                                 {tips.map((tip) => (
                                     <div key={tip.tip_id}>
@@ -267,6 +203,7 @@ export default function LessonPage() {
                         <p className="ai-placeholder">Submit your code to receive personalized feedback and suggestions from AI.</p>
                     </div>
                 </div>
+                </div>
 
                 {/* Right Side - Code Editor */}
                 <div className="editor-section">
@@ -281,7 +218,7 @@ export default function LessonPage() {
                                 {running ? "Running..." : "▶ Run"}
                             </button>
                             <button className="submit-btn">
-                                Submit ✓
+                                Submit 
                             </button>
                         </div>
                     </div>

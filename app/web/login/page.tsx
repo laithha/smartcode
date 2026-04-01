@@ -16,7 +16,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
-    const res = await fetch("/api/login", {
+    const res = await fetch("http://localhost:8000/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -26,11 +26,10 @@ export default function LoginPage() {
     setLoading(false);
 
     if (!res.ok) {
-      toast.error(data.message || "Invalid email or password");
+      toast.error(data.detail || "Invalid email or password");
       return;
     }
 
-    localStorage.setItem("token", data.token);
     toast.success("Login successful");
     setDone(true);
     setTimeout(() => router.replace("/"), 700);

@@ -26,10 +26,10 @@
     margin: 0 auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 30px;
+    gap: 30px;                                  
 }
-
-/* Left Side - Lesson Content */
+/*learn how to make a feature */
+/* Left Side - Lesson Content              so now i want to write a whole chapter of what i am using etc..... i want to write a chapter so i want the features and frameworks and why's everywhere and i want to know every single detail ( just an exaple i am using postgres and i am hosting the daatabase with docker ) like everything because i want to make 6 or 7 pages you just give me details and ideas on how to write it and i will do it and also first  */
 .lesson-content {
     background: white;
     border-radius: 12px;

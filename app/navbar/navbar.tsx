@@ -16,7 +16,7 @@ export default function Navbar() {
       <div className={styles.links}>
         <a href="/">Home</a>
         <a href="/web/lessons">Lessons</a>
-        <a href="">Progress</a>
+        <a href="/web/progress">Progress</a>
         <a href="">About</a>
       </div>
       <a href="/web/login" className={styles.logout} onClick={handleLogout}>
