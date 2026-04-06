@@ -31,13 +31,17 @@ export default function LessonPage() {
 
     useEffect(() => {
         const fetchLesson = async () => {
-            const res = await fetch(`/api/lessons/${id}`);
+            const res = await fetch(`http://localhost:8000/lessons/${id}`);
             const data = await res.json();
             setLesson(data);
 
-            const res2 = await fetch(`/api/tips?lesson_id=${id}`);
-            const data2 = await res2.json();
-            setTips(Array.isArray(data2) ? data2 : []);
+            try {
+                const res2 = await fetch(`http://localhost:8000/tips?lesson_id=${id}`);
+                const data2 = await res2.json();
+                setTips(Array.isArray(data2) ? data2 : []);
+            } catch {
+                setTips([]);
+            }
 
             setLoading(false);
         };

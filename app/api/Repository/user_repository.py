@@ -17,3 +17,7 @@ class UserRepository:
     def get_user_by_email(self,email):
         self.cursor.execute("select * from users where email = %s", (email,))
         return self.cursor.fetchone()
+    
+    def create_user(self, email, password):
+        self.cursor.execute("insert into users (email, password_hash) values(%s, %s)", (email, password))
+        return self.db.commit()

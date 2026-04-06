@@ -26,7 +26,7 @@ export default function LessonsPage() {
 
     const fetchLessons = async () => {
         try {
-            const res = await fetch("/api/lessons");
+            const res = await fetch("http://localhost:8000/lessons");
             const data = await res.json();
             setLessons(Array.isArray(data) ? data : []);
         } catch (error) {

@@ -27,4 +27,14 @@ class LoginRequest(BaseModel):
 def login(request :LoginRequest):
     service = di.get_user_service()
     users = service.login(request.email, request.password)
+    return users
+
+class RegisterRequest(BaseModel):
+    email: str
+    password: str
+
+@router.post("/register", tags=["Register"])
+def create_user(request: RegisterRequest):
+    service = di.get_user_service()
+    users = service.create_user(request.email, request.password)
     return{"users" : users}

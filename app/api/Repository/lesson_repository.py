@@ -1,0 +1,15 @@
+import psycopg2
+
+
+class LessonRepository:
+    def __init__(self, db_connection):
+        self.db = db_connection
+        self.cursor = self.db.cursor()
+
+    def get_lessons_by_id(self, lesson_id):
+        self.cursor.execute("select * from lessons where lesson_id = %s", (lesson_id,))
+        return self.cursor.fetchone()
+    
+    def get_all_lessons(self):
+        self.cursor.execute("select * from lessons")
+        return self.cursor.fetchall()
