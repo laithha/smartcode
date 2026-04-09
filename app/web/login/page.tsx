@@ -30,6 +30,8 @@ export default function LoginPage() {
       return;
     }
 
+    localStorage.setItem("token", data.access_token);
+    localStorage.setItem("user_id", data.user_id);
     toast.success("Login successful");
     setDone(true);
     setTimeout(() => router.replace("/"), 700);

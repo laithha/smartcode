@@ -14,6 +14,12 @@ interface Lesson {
     duration: number;
 }
 
+interface ReviewResult {
+    verdict: string;
+    ai_solution: string;
+    advice: string;
+}
+
 export default function LessonPage() {
     const [lesson, setLesson] = useState<Lesson | null>(null);
     const [tips, setTips] = useState<{ tip_id: number; category: string; message: string }[]>([]);
@@ -21,6 +27,9 @@ export default function LessonPage() {
     const [output, setOutput] = useState("");
     const [loading, setLoading] = useState(true);
     const [running, setRunning] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [reviewResult, setReviewResult] = useState<ReviewResult | null>(null);
+    const [showModal, setShowModal] = useState(false);
 
     // Collapsible section toggles
     const [showProblem, setShowProblem] = useState(false);
@@ -76,6 +85,65 @@ export default function LessonPage() {
         }
     };
 
+    const submitProgress = async () => {
+        const token = localStorage.getItem("token");
+        const user_id = localStorage.getItem("user_id");
+
+        if (!token || !user_id) {
+            alert("You must be logged in to submit.");
+            return;
+        }
+
+        if (!code.trim()) {
+            alert("Please write some code before submitting.");
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            // Step 1: Call AI review
+            const reviewRes = await fetch("http://localhost:8000/ai-review", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    code,
+                    language: lesson?.language || "python",
+                    lesson_title: lesson?.title || "",
+                    lesson_description: lesson?.description || ""
+                })
+            });
+
+            const reviewData = await reviewRes.json();
+            const result: ReviewResult = reviewData.feedback;
+
+            setReviewResult(result);
+            setShowModal(true);
+
+            // Step 2: If correct, save progress
+            if (result.verdict === "CORRECT") {
+                await fetch("http://localhost:8000/progress", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        user_id: parseInt(user_id),
+                        lesson_id: parseInt(id as string),
+                        status: "completed"
+                    })
+                });
+            }
+        } catch {
+            alert("Failed to submit. Please try again.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     // Get Monaco language from lesson language
     const getMonacoLanguage = (lang: string) => {
         const map: { [key: string]: string } = {
@@ -114,6 +182,35 @@ export default function LessonPage() {
 
     return (
         <div className="lesson-page">
+            {/* Review Modal */}
+            {showModal && reviewResult && (
+                <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                        <div className={`modal-header ${reviewResult.verdict === "CORRECT" ? "modal-correct" : "modal-incorrect"}`}>
+                            <h2>{reviewResult.verdict === "CORRECT" ? "✅ Correct!" : "❌ Incorrect"}</h2>
+                            <button className="modal-close" onClick={() => setShowModal(false)}>✕</button>
+                        </div>
+
+                        <div className="modal-solutions">
+                            <div className="solution-column">
+                                <h3>🤖 AI Solution</h3>
+                                <pre className="solution-code">{reviewResult.ai_solution}</pre>
+                            </div>
+                            <div className="solution-divider" />
+                            <div className="solution-column">
+                                <h3>👤 Your Solution</h3>
+                                <pre className="solution-code">{code}</pre>
+                            </div>
+                        </div>
+
+                        <div className="modal-advice">
+                            <h3>💡 Advice</h3>
+                            <p>{reviewResult.advice}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="lesson-container">
                 {/* Left Side - Lesson Content */}
                 <div className="lesson-content">
@@ -204,9 +301,17 @@ export default function LessonPage() {
                     {/* AI Review Section */}
                     <div className="ai-review-section">
                         <h2>🤖 AI Review</h2>
-                        <p className="ai-placeholder">Submit your code to receive personalized feedback and suggestions from AI.</p>
+                        {reviewResult ? (
+                            <div>
+                                <p className={reviewResult.verdict === "CORRECT" ? "ai-correct" : "ai-incorrect"}>
+                                    {reviewResult.verdict === "CORRECT" ? "✅ Your solution is correct!" : "❌ Your solution needs improvement."}
+                                </p>
+                                <p className="ai-advice-text">{reviewResult.advice}</p>
+                            </div>
+                        ) : (
+                            <p className="ai-placeholder">Submit your code to receive personalized feedback and suggestions from AI.</p>
+                        )}
                     </div>
-                </div>
                 </div>
 
                 {/* Right Side - Code Editor */}
@@ -221,8 +326,8 @@ export default function LessonPage() {
                             >
                                 {running ? "Running..." : "▶ Run"}
                             </button>
-                            <button className="submit-btn">
-                                Submit 
+                            <button className="submit-btn" onClick={submitProgress} disabled={submitting}>
+                                {submitting ? "Reviewing..." : "Submit"}
                             </button>
                         </div>
                     </div>

@@ -8,6 +8,12 @@ from app.api.Repository.progress_repository import ProgressRepository
 from app.api.service.progress_service import ProgressService
 from app.api.Repository.lesson_repository import LessonRepository
 from app.api.service.lesson_service import LessonService
+from app.api.Repository.tip_repository import TipRepository
+from app.api.service.tip_service import TipService
+from app.api.service.ai_service import AIService
+ai_service = AIService()
+tip_repo = TipRepository(conn)
+tip_service = TipService(tip_repo)
 user_repo = UserRepository(conn)
 user_service = UserService(user_repo)
 progress_repo = ProgressRepository(conn)
@@ -26,3 +32,9 @@ def get_lesson_service() ->LessonService:
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 def get_current_user(token = Depends(oauth2_scheme)):
       return verify_token(token)
+
+def get_tip_service() -> TipService:
+     return tip_service
+
+def get_ai_service()->AIService:
+     return ai_service
