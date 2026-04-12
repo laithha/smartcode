@@ -5,6 +5,7 @@ import logo from "../logo.png";
 export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
     window.location.href = "/web/login";
   };
 

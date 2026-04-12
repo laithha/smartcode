@@ -2,19 +2,20 @@ from app.api.service.user_service import UserService
 from app.api.Repository.user_repository import UserRepository
 from app.api.database import conn
 import app.api.dependencies.di as di
-from fastapi import APIRouter
+from app.api.dependencies.di import get_current_user
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 router = APIRouter()
 
 @router.get("/users/{id}", tags = ["userID"])
-def get_user_by_id(id: int):
+def get_user_by_id(id: int, current_user = Depends(get_current_user)):
     service = di.get_user_service()
     user = service.get_user_by_id(id)
     return{"user": user}
 
 @router.get("/users", tags = ["users"])
-def get_all_users():
+def get_all_users(current_user = Depends(get_current_user)):
     service = di.get_user_service()
     users = service.get_all_users()
     return{"users": users}

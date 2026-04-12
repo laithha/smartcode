@@ -1,0 +1,224 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+.progress-bg {
+    min-height: 100vh;
+    background: #f8f9fc;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 30px 20px;
+}
+
+.progress-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.progress-header {
+    text-align: center;
+    margin-bottom: 35px;
+    padding-top: 10px;
+}
+
+.progress-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #1E2340;
+    margin-bottom: 8px;
+}
+
+.progress-header .highlight {
+    color: #5B4FCF;
+}
+
+.progress-header p {
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+.stats-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.stats-count {
+    color: #9ca3af;
+    font-size: 0.8rem;
+}
+
+.stats-count strong {
+    color: #1E2340;
+    font-weight: 600;
+}
+
+.progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.progress-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e0e4eb;
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.progress-card:hover {
+    border-color: #5B4FCF;
+    box-shadow: 0 8px 20px rgba(91, 79, 207, 0.1);
+    transform: translateY(-2px);
+}
+
+.progress-card-header {
+    background: linear-gradient(135deg, #f8f9fc 0%, #eef0f6 100%);
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #e0e4eb;
+}
+
+.progress-language-icon {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #5B4FCF;
+    background: white;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 2px solid #e0e4eb;
+}
+
+.progress-card-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.progress-card-content h3 {
+    font-size: 0.95rem;
+    color: #1E2340;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.progress-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.progress-language {
+    font-size: 0.78rem;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.progress-difficulty {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.progress-status {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #28ca41;
+    background: #f0fdf4;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #bbf7d0;
+    width: fit-content;
+    margin-top: auto;
+}
+
+.no-progress {
+    text-align: center;
+    padding: 60px 30px;
+    background: white;
+    border-radius: 12px;
+    border: 1px dashed #d1d5db;
+}
+
+.no-progress-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 14px;
+    opacity: 0.4;
+}
+
+.no-progress h3 {
+    color: #1E2340;
+    font-size: 1rem;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.no-progress p {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+}
+
+.browse-btn {
+    display: inline-block;
+    background: #5B4FCF;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.browse-btn:hover {
+    background: #4a3fb8;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    color: #6b7280;
+}
+
+.loader {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #e5e7eb;
+    border-top-color: #5B4FCF;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-bottom: 14px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .progress-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .progress-grid {
+        grid-template-columns: 1fr;
+    }
+}

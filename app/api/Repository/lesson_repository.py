@@ -13,3 +13,7 @@ class LessonRepository:
     def get_all_lessons(self):
         self.cursor.execute("select * from lessons")
         return self.cursor.fetchall()
+    
+    def count_lessons(self):
+        self.cursor.execute("select COUNT(*) from lessons")
+        return self.cursor.fetchone()

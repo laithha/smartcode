@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from "react";
 import "./globals.css";
 import Navbar from "./navbar/navbar";
 import { usePathname } from "next/navigation";
@@ -17,6 +17,12 @@ export default function RootLayout({
     pathname === "/web/forgot-password" ||
     pathname === "/web/reset-password";
 
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token && !hideNavbar) {
+    window.location.href = "/web/login";
+  }
+}, [pathname]);
   return (
     <html lang="en">
       <body
