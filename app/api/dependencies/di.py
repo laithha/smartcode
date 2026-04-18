@@ -16,10 +16,10 @@ tip_repo = TipRepository(conn)
 tip_service = TipService(tip_repo)
 user_repo = UserRepository(conn)
 user_service = UserService(user_repo)
-progress_repo = ProgressRepository(conn)
-progress_service = ProgressService(progress_repo)
 lesson_repo = LessonRepository(conn)
 lesson_service = LessonService(lesson_repo)
+progress_repo = ProgressRepository(conn)
+progress_service = ProgressService(progress_repo, lesson_repo)
 def get_user_service() ->UserService:
     return user_service
 

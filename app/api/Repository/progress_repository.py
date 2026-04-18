@@ -11,7 +11,7 @@ class ProgressRepository:
 
     def create_progress(self, user_id, lesson_id, status):
         try:
-            self.cursor.execute("insert into progress(user_id, lesson_id, status) values (%s,%s,%s)", (user_id, lesson_id, status))
+            self.cursor.execute("insert into progress(user_id, lesson_id, status, completed_at) values (%s,%s,%s,NOW())", (user_id, lesson_id, status))
             return self.db.commit()
         except Exception as e:
             self.db.rollback()                                                                                                                                                                                 
@@ -21,3 +21,6 @@ class ProgressRepository:
         self.cursor.execute("select * from progress where user_id = %s and lesson_id = %s", (user_id, lesson_id))
         return self.cursor.fetchone()
     
+    def get_completed_dates(self, user_id):
+        self.cursor.execute("SELECT DATE(completed_at) FROM progress WHERE user_id = %s ORDER BY completed_at DESC",(user_id,))
+        return self.cursor.fetchall()

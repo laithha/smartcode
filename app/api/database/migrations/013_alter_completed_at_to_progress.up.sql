@@ -1,0 +1,1 @@
+ALTER TABLE progress ADD COLUMN completed_at TIMESTAMP DEFAULT NOW();

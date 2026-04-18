@@ -3,22 +3,9 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Editor from "@monaco-editor/react";
 import "./style.css";
-
-interface Lesson {
-    lesson_id: number;
-    title: string;
-    description: string;
-    content: string;
-    language: string;
-    difficulty: string;
-    duration: number;
-}
-
-interface ReviewResult {
-    verdict: string;
-    ai_solution: string;
-    advice: string;
-}
+import CollapsibleSection from "./components/CollapsibleSection";
+import ReviewModal from "./components/ReviewModal";
+import { MONACO_LANG_MAP, Lesson, ReviewResult } from "./utils";
 
 export default function LessonPage() {
     const [lesson, setLesson] = useState<Lesson | null>(null);
@@ -30,54 +17,33 @@ export default function LessonPage() {
     const [submitting, setSubmitting] = useState(false);
     const [reviewResult, setReviewResult] = useState<ReviewResult | null>(null);
     const [showModal, setShowModal] = useState(false);
-
-    // Collapsible section toggles
-    const [showProblem, setShowProblem] = useState(false);
-    const [showExample, setShowExample] = useState(false);
-    const [showHints, setShowHints] = useState(false);
-
     const { id } = useParams();
 
     useEffect(() => {
         const fetchLesson = async () => {
             const res = await fetch(`http://localhost:8000/lessons/${id}`);
-            const data = await res.json();
-            setLesson(data);
-
+            setLesson(await res.json());
             try {
                 const res2 = await fetch(`http://localhost:8000/tips?lesson_id=${id}`);
                 const data2 = await res2.json();
                 setTips(Array.isArray(data2) ? data2 : []);
-            } catch {
-                setTips([]);
-            }
-
+            } catch { setTips([]); }
             setLoading(false);
         };
         fetchLesson();
     }, [id]);
 
-    // Function to run the code
     const runCode = async () => {
         setRunning(true);
         setOutput("");
-
         try {
             const res = await fetch("/api/execute", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    code: code,
-                    language: lesson?.language || "python"
-                })
+                body: JSON.stringify({ code, language: lesson?.language || "python" }),
             });
             const result = await res.json();
-
-            if (result.success) {
-                setOutput(result.output || "Code executed successfully!");
-            } else {
-                setOutput(result.error || result.output || "Error executing code");
-            }
+            setOutput(result.success ? result.output || "Code executed successfully!" : result.error || "Error executing code");
         } catch (error) {
             setOutput("Failed to execute code: " + String(error));
         } finally {
@@ -88,53 +54,25 @@ export default function LessonPage() {
     const submitProgress = async () => {
         const token = localStorage.getItem("token");
         const user_id = localStorage.getItem("user_id");
-
-        if (!token || !user_id) {
-            alert("You must be logged in to submit.");
-            return;
-        }
-
-        if (!code.trim()) {
-            alert("Please write some code before submitting.");
-            return;
-        }
+        if (!token || !user_id) return alert("You must be logged in to submit.");
+        if (!code.trim()) return alert("Please write some code before submitting.");
 
         setSubmitting(true);
         try {
-            // Step 1: Call AI review
             const reviewRes = await fetch("http://localhost:8000/ai-review", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    code,
-                    language: lesson?.language || "python",
-                    lesson_title: lesson?.title || "",
-                    lesson_description: lesson?.description || ""
-                })
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ code, language: lesson?.language || "python", lesson_title: lesson?.title || "", lesson_description: lesson?.description || "" }),
             });
-
-            const reviewData = await reviewRes.json();
-            const result: ReviewResult = reviewData.feedback;
-
+            const result: ReviewResult = (await reviewRes.json()).feedback;
             setReviewResult(result);
             setShowModal(true);
 
-            // Step 2: If correct, save progress
             if (result.verdict === "CORRECT") {
                 await fetch("http://localhost:8000/progress", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        user_id: parseInt(user_id),
-                        lesson_id: parseInt(id as string),
-                        status: "completed"
-                    })
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    body: JSON.stringify({ user_id: parseInt(user_id), lesson_id: parseInt(id as string), status: "completed" }),
                 });
             }
         } catch {
@@ -144,75 +82,14 @@ export default function LessonPage() {
         }
     };
 
-    // Get Monaco language from lesson language
-    const getMonacoLanguage = (lang: string) => {
-        const map: { [key: string]: string } = {
-            python: "python",
-            javascript: "javascript",
-            java: "java",
-            "c++": "cpp",
-            cpp: "cpp",
-            c: "c",
-            "c#": "csharp",
-            csharp: "csharp",
-            ruby: "ruby",
-            go: "go",
-            rust: "rust",
-            php: "php",
-            typescript: "typescript",
-        };
-        return map[lang?.toLowerCase()] || "python";
-    };
-
-    if (loading) {
-        return (
-            <div className="lesson-page">
-                <div className="loading">Loading lesson...</div>
-            </div>
-        );
-    }
-
-    if (!lesson) {
-        return (
-            <div className="lesson-page">
-                <div className="error">Lesson not found</div>
-            </div>
-        );
-    }
+    if (loading) return <div className="lesson-page"><div className="loading">Loading lesson...</div></div>;
+    if (!lesson) return <div className="lesson-page"><div className="error">Lesson not found</div></div>;
 
     return (
         <div className="lesson-page">
-            {/* Review Modal */}
-            {showModal && reviewResult && (
-                <div className="modal-overlay" onClick={() => setShowModal(false)}>
-                    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                        <div className={`modal-header ${reviewResult.verdict === "CORRECT" ? "modal-correct" : "modal-incorrect"}`}>
-                            <h2>{reviewResult.verdict === "CORRECT" ? "✅ Correct!" : "❌ Incorrect"}</h2>
-                            <button className="modal-close" onClick={() => setShowModal(false)}>✕</button>
-                        </div>
-
-                        <div className="modal-solutions">
-                            <div className="solution-column">
-                                <h3>🤖 AI Solution</h3>
-                                <pre className="solution-code">{reviewResult.ai_solution}</pre>
-                            </div>
-                            <div className="solution-divider" />
-                            <div className="solution-column">
-                                <h3>👤 Your Solution</h3>
-                                <pre className="solution-code">{code}</pre>
-                            </div>
-                        </div>
-
-                        <div className="modal-advice">
-                            <h3>💡 Advice</h3>
-                            <p>{reviewResult.advice}</p>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {showModal && reviewResult && <ReviewModal result={reviewResult} code={code} onClose={() => setShowModal(false)} />}
 
             <div className="lesson-container">
-                {/* Left Side - Lesson Content */}
                 <div className="lesson-content">
                     <div className="lesson-header">
                         <h1>{lesson.title}</h1>
@@ -223,67 +100,25 @@ export default function LessonPage() {
                         </div>
                     </div>
 
-                    <div className="lesson-description">
-                        <p>{lesson.description}</p>
-                    </div>
+                    <div className="lesson-description"><p>{lesson.description}</p></div>
 
-                    {/* Lesson Content from DB */}
                     <div className="lesson-body">
                         <h2>📖 Lesson Content</h2>
-                        <div className="content-text">
-                            {lesson.content || "No content available yet."}
-                        </div>
+                        <div className="content-text">{lesson.content || "No content available yet."}</div>
                     </div>
 
-                    {/* Collapsible Problem Section */}
-                    <div className="collapsible-section task-collapsible">
-                        <button
-                            className="collapsible-header"
-                            onClick={() => setShowProblem(!showProblem)}
-                        >
-                            <h2>🎯 Your Task</h2>
-                            <span className={`arrow ${showProblem ? "arrow-open" : ""}`}>▶</span>
-                        </button>
-                        {showProblem && (
-                            <div className="collapsible-content">
-                                <p>Write code in the editor on the right to practice what you learned.</p>
-                            </div>
-                        )}
-                    </div>
+                    <CollapsibleSection icon="🎯" title="Your Task">
+                        <p>Write code in the editor on the right to practice what you learned.</p>
+                    </CollapsibleSection>
 
-                    {/* Collapsible Example Section */}
-                    <div className="collapsible-section">
-                        <button
-                            className="collapsible-header"
-                            onClick={() => setShowExample(!showExample)}
-                        >
-                            <h2>📝 Example</h2>
-                            <span className={`arrow ${showExample ? "arrow-open" : ""}`}>▶</span>
-                        </button>
-                        {showExample && (
-                            <div className="collapsible-content">
-                                <p>No example available yet.</p>
-                            </div>
-                        )}
-                    </div>
+                    <CollapsibleSection icon="📝" title="Example">
+                        <p>No example available yet.</p>
+                    </CollapsibleSection>
 
-                    {/* Collapsible Hints Section */}
-                    <div className="collapsible-section">
-                        <button
-                            className="collapsible-header"
-                            onClick={() => setShowHints(!showHints)}
-                        >
-                            <h2>💡 Hints</h2>
-                            <span className={`arrow ${showHints ? "arrow-open" : ""}`}>▶</span>
-                        </button>
-                        {showHints && (
-                            <div className="collapsible-content">
-                                <p>No hints available yet.</p>
-                            </div>
-                        )}
-                    </div>
+                    <CollapsibleSection icon="💡" title="Hints">
+                        <p>No hints available yet.</p>
+                    </CollapsibleSection>
 
-                    {/* Tips from database */}
                     {tips.length > 0 && (
                         <div className="lesson-tips">
                             <h2>💡 Tips</h2>
@@ -298,7 +133,6 @@ export default function LessonPage() {
                         </div>
                     )}
 
-                    {/* AI Review Section */}
                     <div className="ai-review-section">
                         <h2>🤖 AI Review</h2>
                         {reviewResult ? (
@@ -314,16 +148,11 @@ export default function LessonPage() {
                     </div>
                 </div>
 
-                {/* Right Side - Code Editor */}
                 <div className="editor-section">
                     <div className="editor-header">
                         <h3>Code Editor</h3>
                         <div className="editor-buttons">
-                            <button
-                                className="run-btn"
-                                onClick={runCode}
-                                disabled={running}
-                            >
+                            <button className="run-btn" onClick={runCode} disabled={running}>
                                 {running ? "Running..." : "▶ Run"}
                             </button>
                             <button className="submit-btn" onClick={submitProgress} disabled={submitting}>
@@ -331,27 +160,19 @@ export default function LessonPage() {
                             </button>
                         </div>
                     </div>
-
                     <div className="editor-wrapper">
                         <Editor
                             height="400px"
-                            language={getMonacoLanguage(lesson.language)}
+                            language={MONACO_LANG_MAP[lesson.language?.toLowerCase()] || "python"}
                             theme="vs-dark"
                             value={code}
                             onChange={(value) => setCode(value || "")}
-                            options={{
-                                minimap: { enabled: false },
-                                fontSize: 14,
-                                padding: { top: 16 },
-                            }}
+                            options={{ minimap: { enabled: false }, fontSize: 14, padding: { top: 16 } }}
                         />
                     </div>
-
                     <div className="output-section">
                         <h4>Output</h4>
-                        <pre className="output-box">
-                            {output || "Click 'Run' to see output..."}
-                        </pre>
+                        <pre className="output-box">{output || "Click 'Run' to see output..."}</pre>
                     </div>
                 </div>
             </div>

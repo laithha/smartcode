@@ -1,13 +1,18 @@
 from app.api.Repository.progress_repository import ProgressRepository
+from app.api.Repository.lesson_repository import LessonRepository
 from fastapi import HTTPException
+from datetime import date
 class ProgressService:
-    def __init__(self, repo:ProgressRepository):
+    def __init__(self, repo:ProgressRepository, lesson_repo:LessonRepository):
         self.repo = repo
+        self.lesson_repo = lesson_repo
 
     def get_progress_by_user_id(self, user_id):
         prog_id = self.repo.get_progress_by_id(user_id)
         prog = [{"progress_id": row[0], "status": row[1], "title": row[2], "language": row[3], "difficulty": row[4]} for row in prog_id]
-        return {"prog" : prog}
+        total = self.lesson_repo.count_lessons()[0]
+        streak = self.get_streak(user_id)
+        return {"prog" : prog, "total" :total, "streak" : streak }
 
     def create_progress(self,user_id, lesson_id, status):
         prog_exists = self.repo.get_progress_by_user_and_lesson(user_id, lesson_id)
@@ -16,3 +21,16 @@ class ProgressService:
             return {"message" : "progress saved successfully"}
         
         raise HTTPException(status_code=400, detail="Lesson already completed")
+    
+    def get_streak(self, user_id):
+        rows = self.repo.get_completed_dates(user_id)
+        dates = sorted(set(row[0] for row in rows), reverse=True)
+        streak = 0
+        for i in range(len(dates)):
+            if i == 0:
+                streak = 1
+            elif (dates[i-1] - dates[i]).days == 1:
+                streak += 1
+            else:
+                break
+        return streak
