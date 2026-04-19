@@ -9,7 +9,6 @@ class UserService:
     def __init__(self, repo:UserRepository):
         self.repo = repo
     
-
     def get_user_by_id(self,id):
         user = self.repo.get_user_by_id(id)
         if user is None:
@@ -41,5 +40,15 @@ class UserService:
         user_info = self.repo.create_user(email, pwd_context.hash(password))
         
         return{"message" : "created accout successfully!"}
+
+
+    def update_user_admin_status(self,user_id, is_admin):
+        self.repo.update_user_admin_status(user_id, is_admin)
+        return {"message" : "updated successfully"}
     
-    
+    def delete_user(self,user_id):
+        user = self.repo.get_user_by_id(user_id)
+        if user is None:
+            raise HTTPException(status_code=404)
+        self.repo.delete_user(user_id)
+        return{"message" : "deleted account successfully"}

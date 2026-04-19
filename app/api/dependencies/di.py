@@ -1,5 +1,5 @@
 from app.api.database import conn
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from app.api.auth import verify_token
 from app.api.Repository.user_repository import UserRepository
@@ -38,3 +38,9 @@ def get_tip_service() -> TipService:
 
 def get_ai_service()->AIService:
      return ai_service
+
+def get_admin_user(current_user = Depends(get_current_user)):
+      user = user_repo.get_user_by_id(int(current_user))
+      if user is None or user[3] != True:
+          raise HTTPException(status_code=403, detail="admin access required")
+      return current_user

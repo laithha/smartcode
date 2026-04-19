@@ -17,3 +17,11 @@ class LessonRepository:
     def count_lessons(self):
         self.cursor.execute("select COUNT(*) from lessons")
         return self.cursor.fetchone()
+
+    def create_lesson(self,title,description, content, language, difficulty, duration):
+        self.cursor.execute("insert into lessons(title, description,content, language, difficulty, duration) values(%s,%s,%s,%s,%s,%s)", (title, description, content, language, difficulty, duration))
+        return self.db.commit()
+    
+    def delete_lesson(self,lesson_id):
+        self.cursor.execute("delete from lessons where lesson_id=%s", (lesson_id,))
+        return self.db.commit()

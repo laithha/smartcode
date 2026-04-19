@@ -49,15 +49,15 @@ export default function LessonsPage() {
         fetchLessons();
     }, []);
 
-    const languages = ["all", ...new Set(lessons.map((l) => l.language).filter(Boolean))];
+    const languages = ["all", ...new Set(lessons.map((l) => l.language?.toLowerCase()).filter(Boolean))];
     const difficulties = ["all", "beginner", "intermediate", "advanced"];
 
     const filteredLessons = lessons.filter((lesson) => {
         const matchSearch =
             lesson.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             lesson.description?.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchLanguage = selectedLanguage === "all" || lesson.language === selectedLanguage;
-        const matchDifficulty = selectedDifficulty === "all" || lesson.difficulty === selectedDifficulty;
+        const matchLanguage = selectedLanguage === "all" || lesson.language?.toLowerCase() === selectedLanguage;
+        const matchDifficulty = selectedDifficulty === "all" || lesson.difficulty?.toLowerCase() === selectedDifficulty;
         return matchSearch && matchLanguage && matchDifficulty;
     });
 
@@ -129,7 +129,7 @@ export default function LessonsPage() {
                                         )}
                                         {lang === "all" ? "All Languages" : lang.charAt(0).toUpperCase() + lang.slice(1)}
                                         <span className="lf2-sidebar-count">
-                                            {lang === "all" ? lessons.length : lessons.filter(l => l.language === lang).length}
+                                            {lang === "all" ? lessons.length : lessons.filter(l => l.language?.toLowerCase() === lang).length}
                                         </span>
                                     </button>
                                 );

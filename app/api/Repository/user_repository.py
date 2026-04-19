@@ -21,3 +21,11 @@ class UserRepository:
     def create_user(self, email, password):
         self.cursor.execute("insert into users (email, password_hash) values(%s, %s)", (email, password))
         return self.db.commit()
+    
+    def update_user_admin_status(self,user_id, is_admin):
+        self.cursor.execute("update users set is_admin = %s where id = %s", (is_admin, user_id))
+        return self.db.commit()
+    
+    def delete_user(self,user_id):
+        self.cursor.execute("delete from users where id =%s", (user_id,))
+        return self.db.commit()

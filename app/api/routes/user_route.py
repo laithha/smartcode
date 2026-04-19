@@ -2,7 +2,7 @@ from app.api.service.user_service import UserService
 from app.api.Repository.user_repository import UserRepository
 from app.api.database import conn
 import app.api.dependencies.di as di
-from app.api.dependencies.di import get_current_user
+from app.api.dependencies.di import get_current_user, get_admin_user
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
@@ -39,3 +39,19 @@ def create_user(request: RegisterRequest):
     service = di.get_user_service()
     users = service.create_user(request.email, request.password)
     return{"users" : users}
+
+@router.delete("/users/{user_id}", tags=["delete"])
+def delete_user(user_id, current_user = Depends(get_admin_user)):
+    service = di.get_user_service()
+    delete = service.delete_user(user_id)
+    return delete
+
+
+class AdminStatusRequest(BaseModel):
+    is_admin: bool
+
+@router.put("/users/{user_id}/admin", tags=["admin"])
+def update_admin_status(user_id: int, request: AdminStatusRequest, current_user = Depends(get_admin_user)):
+    service = di.get_user_service()
+    update_admin = service.update_user_admin_status(user_id, request.is_admin)
+    return update_admin
