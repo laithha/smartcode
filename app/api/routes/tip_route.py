@@ -8,4 +8,9 @@ router = APIRouter()
 def get_tip(lesson_id: int):
     service = di.get_tip_service()
     lesson = service.get_tip_by_id(lesson_id)
-    return (lesson)
+    return [{
+      "tip_id": l[0],
+      "category": l[1],
+      "message": l[2]
+    } 
+    for l in lesson]

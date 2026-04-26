@@ -108,44 +108,33 @@ export default function LessonPage() {
                     </div>
 
                     <CollapsibleSection icon="🎯" title="Your Task">
-                        <p>Write code in the editor on the right to practice what you learned.</p>
+                        {tips.filter(t => t.category === 'task').length > 0
+                            ? tips.filter(t => t.category === 'task').map(t => (
+                                <p key={t.tip_id} style={{ whiteSpace: 'pre-wrap' }}>{t.message}</p>
+                            ))
+                            : <p>No task available yet.</p>
+                        }
                     </CollapsibleSection>
 
                     <CollapsibleSection icon="📝" title="Example">
-                        <p>No example available yet.</p>
+                        {tips.filter(t => t.category === 'example').length > 0
+                            ? tips.filter(t => t.category === 'example').map(t => (
+                                <pre key={t.tip_id} style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', background: '#1e1e1e', color: '#d4d4d4', padding: '12px', borderRadius: '6px' }}>{t.message}</pre>
+                            ))
+                            : <p>No example available yet.</p>
+                        }
                     </CollapsibleSection>
 
                     <CollapsibleSection icon="💡" title="Hints">
-                        <p>No hints available yet.</p>
+                        {tips.filter(t => t.category === 'hint').length > 0
+                            ? tips.filter(t => t.category === 'hint').map(t => (
+                                <p key={t.tip_id} style={{ whiteSpace: 'pre-wrap' }}>{t.message}</p>
+                            ))
+                            : <p>No hints available yet.</p>
+                        }
                     </CollapsibleSection>
 
-                    {tips.length > 0 && (
-                        <div className="lesson-tips">
-                            <h2>💡 Tips</h2>
-                            <div className="tips-text">
-                                {tips.map((tip) => (
-                                    <div key={tip.tip_id}>
-                                        <h3 className="tip-category">{tip.category}</h3>
-                                        <p className="tip-message">{tip.message}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="ai-review-section">
-                        <h2>🤖 AI Review</h2>
-                        {reviewResult ? (
-                            <div>
-                                <p className={reviewResult.verdict === "CORRECT" ? "ai-correct" : "ai-incorrect"}>
-                                    {reviewResult.verdict === "CORRECT" ? "✅ Your solution is correct!" : "❌ Your solution needs improvement."}
-                                </p>
-                                <p className="ai-advice-text">{reviewResult.advice}</p>
-                            </div>
-                        ) : (
-                            <p className="ai-placeholder">Submit your code to receive personalized feedback and suggestions from AI.</p>
-                        )}
-                    </div>
+                    
                 </div>
 
                 <div className="editor-section">
