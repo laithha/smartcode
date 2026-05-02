@@ -1,0 +1,4 @@
+ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_code VARCHAR(10);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_expires TIMESTAMP;
+UPDATE users SET is_verified = TRUE WHERE is_verified = FALSE;

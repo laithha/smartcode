@@ -1,6 +1,5 @@
 from app.api.service.user_service import UserService
 from app.api.Repository.user_repository import UserRepository
-from app.api.database import conn
 import app.api.dependencies.di as di
 from app.api.dependencies.di import get_current_user, get_admin_user
 from fastapi import APIRouter, Depends
@@ -41,11 +40,62 @@ def create_user(request: RegisterRequest):
     return{"users" : users}
 
 @router.delete("/users/{user_id}", tags=["delete"])
-def delete_user(user_id, current_user = Depends(get_admin_user)):
+def delete_user(user_id: int, current_user = Depends(get_current_user)):
+    user = di.user_repo.get_user_by_id(int(current_user))
+    is_admin = user is not None and user[3] == True
+    if int(current_user) != user_id and not is_admin:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail="Forbidden")
     service = di.get_user_service()
-    delete = service.delete_user(user_id)
-    return delete
+    return service.delete_user(user_id)
 
+
+class VerifyEmailRequest(BaseModel):
+    email: str
+    code: str
+
+@router.post("/verify-email", tags=["verify"])
+def verify_email(request: VerifyEmailRequest):
+    service = di.get_user_service()
+    return service.verify_email(request.email, request.code)
+
+class ResendCodeRequest(BaseModel):
+    email: str
+
+@router.post("/resend-verification", tags=["verify"])
+def resend_verification(request: ResendCodeRequest):
+    service = di.get_user_service()
+    return service.resend_verification(request.email)
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+@router.put("/users/{user_id}/password", tags=["users"])
+def change_password(user_id: int, request: ChangePasswordRequest, current_user = Depends(get_current_user)):
+    if int(current_user) != user_id:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail="Forbidden")
+    service = di.get_user_service()
+    return service.change_password(user_id, request.current_password, request.new_password)
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+@router.post("/forgot-password", tags=["password"])
+def forgot_password(request: ForgotPasswordRequest):
+    service = di.get_user_service()
+    return service.request_password_reset(request.email)
+
+class ResetPasswordRequest(BaseModel):
+    email: str
+    code: str
+    new_password: str
+
+@router.post("/reset-password", tags=["password"])
+def reset_password(request: ResetPasswordRequest):
+    service = di.get_user_service()
+    return service.reset_password(request.email, request.code, request.new_password)
 
 class AdminStatusRequest(BaseModel):
     is_admin: bool

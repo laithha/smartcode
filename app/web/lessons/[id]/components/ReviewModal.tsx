@@ -13,27 +13,48 @@ interface Props {
 }
 
 export default function ReviewModal({ result, code, onClose }: Props) {
+    const correct = result.verdict === "CORRECT";
+
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                <div className={`modal-header ${result.verdict === "CORRECT" ? "modal-correct" : "modal-incorrect"}`}>
-                    <h2>{result.verdict === "CORRECT" ? "✅ Correct!" : "❌ Incorrect"}</h2>
-                    <button className="modal-close" onClick={onClose}>✕</button>
-                </div>
-                <div className="modal-solutions">
-                    <div className="solution-column">
-                        <h3>🤖 AI Solution</h3>
-                        <pre className="solution-code">{result.ai_solution}</pre>
+        <div className="rm-overlay" onClick={onClose}>
+            <div className="rm-box" onClick={(e) => e.stopPropagation()}>
+
+                <div className={`rm-header ${correct ? "rm-header-correct" : "rm-header-incorrect"}`}>
+                    <div className="rm-header-left">
+                        <span className="rm-verdict-icon">{correct ? "✓" : "✗"}</span>
+                        <div>
+                            <p className="rm-verdict-label">{correct ? "All good!" : "Not quite"}</p>
+                            <h2 className="rm-verdict-title">{correct ? "Correct Solution" : "Incorrect Solution"}</h2>
+                        </div>
                     </div>
-                    <div className="solution-divider" />
-                    <div className="solution-column">
-                        <h3>👤 Your Solution</h3>
-                        <pre className="solution-code">{code}</pre>
+                    <button className="rm-close" onClick={onClose}>✕</button>
+                </div>
+
+                <div className="rm-grid">
+                    <div className="rm-col">
+                        <div className="rm-col-header">
+                            <span className="rm-col-dot rm-dot-purple" />
+                            Your Solution
+                        </div>
+                        <pre className="rm-code">{code}</pre>
+                    </div>
+                    <div className="rm-divider" />
+                    <div className="rm-col">
+                        <div className="rm-col-header">
+                            <span className="rm-col-dot rm-dot-blue" />
+                            AI Solution
+                        </div>
+                        <pre className="rm-code">{result.ai_solution}</pre>
                     </div>
                 </div>
-                <div className="modal-advice">
-                    <h3>💡 Advice</h3>
-                    <p>{result.advice}</p>
+
+                <div className="rm-advice">
+                    <p className="rm-advice-label">Feedback</p>
+                    <p className="rm-advice-text">{result.advice}</p>
+                </div>
+
+                <div className="rm-footer">
+                    <button className="rm-close-btn" onClick={onClose}>Close</button>
                 </div>
             </div>
         </div>

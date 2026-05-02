@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from app.api.database import conn
 import app.api.dependencies.di as di
 
 router = APIRouter()

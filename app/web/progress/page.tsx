@@ -5,10 +5,20 @@ import "./style.css";
 
 interface ProgressItem {
     progress_id: number;
+    lesson_id: number;
     status: string;
     title: string;
     language: string;
     difficulty: string;
+}
+
+interface Recommendation {
+    lesson_id: number;
+    title: string;
+    description: string;
+    language: string;
+    difficulty: string;
+    duration: number;
 }
 
 const LANG_COLORS: Record<string, { color: string; bg: string }> = {
@@ -30,6 +40,7 @@ export default function ProgressPage() {
     const [total, setTotal] = useState(0);
     const [streak, setStreak] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
 
     useEffect(() => {
         const fetchProgress = async () => {
@@ -43,6 +54,12 @@ export default function ProgressPage() {
             setTotal(data.user?.total ?? 0);
             setStreak(data.user?.streak ?? 0);
             setLoading(false);
+
+            const recRes = await fetch(`http://localhost:8000/progress/${user_id}/recommendation`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const recData = await recRes.json();
+            if (recData.lesson_id) setRecommendation(recData);
         };
         fetchProgress();
     }, []);
@@ -150,6 +167,27 @@ export default function ProgressPage() {
                         </div>
                     </div>
                 </motion.div>
+
+                {/* Recommendation */}
+                {recommendation && (
+                    <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} style={{ marginBottom: "32px" }}>
+                        <div className="f2-section-row">
+                            <h2 className="f2-section-title">Up Next</h2>
+                        </div>
+                        <a href={`/web/lessons/${recommendation.lesson_id}`} className="f2-card" style={{ display: "block", textDecoration: "none", marginTop: "12px" }}>
+                            <div className="f2-card-top">
+                                <span className="f2-lang-chip" style={{ color: langConf(recommendation.language).color, background: langConf(recommendation.language).bg }}>
+                                    {recommendation.language?.toUpperCase()}
+                                </span>
+                                <span className="f2-diff-chip" style={{ color: diffConf(recommendation.difficulty).color, background: diffConf(recommendation.difficulty).bg }}>
+                                    {recommendation.difficulty}
+                                </span>
+                            </div>
+                            <p className="f2-card-title">{recommendation.title}</p>
+                            <p style={{ fontSize: "13px", color: "#6b7280", margin: "4px 0 0" }}>{recommendation.description}</p>
+                        </a>
+                    </motion.div>
+                )}
 
                 {/* Lessons section */}
                 {progress.length === 0 ? (

@@ -36,6 +36,7 @@ export default function Navbar() {
         <a href="/web/progress">Progress</a>
         <a href="">About</a>
         {isAdmin && <a href="/web/admin">Admin</a>}
+        <a href="/web/settings">Settings</a>
       </div>
       <a href="/web/login" className={styles.logout} onClick={handleLogout}>
         Logout

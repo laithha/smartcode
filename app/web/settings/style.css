@@ -1,0 +1,255 @@
+.settings-root {
+  min-height: 100vh;
+  background: #f8f9fb;
+  padding: 48px 24px;
+  box-sizing: border-box;
+}
+
+.settings-container {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.settings-header {
+  margin-bottom: 8px;
+}
+
+.settings-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 6px;
+}
+
+.settings-sub {
+  font-size: 15px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Card */
+.settings-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 28px;
+}
+
+.settings-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 20px;
+}
+
+/* Info rows */
+.settings-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.settings-info-row:last-child {
+  border-bottom: none;
+}
+
+.settings-info-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.settings-info-value {
+  font-size: 14px;
+  color: #111;
+  font-weight: 500;
+}
+
+.settings-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.settings-badge-admin {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.settings-badge-user {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* Form */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.settings-input {
+  padding: 10px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fafafa;
+}
+
+.settings-input:focus {
+  border-color: #7c3aed;
+  background: #fff;
+}
+
+.settings-btn {
+  margin-top: 4px;
+  padding: 11px 20px;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.2s;
+}
+
+.settings-btn:hover:not(:disabled) {
+  background: #6d28d9;
+}
+
+.settings-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Danger zone */
+.settings-danger-card {
+  border-color: #fecaca;
+  background: #fff8f8;
+}
+
+.settings-danger-title {
+  color: #dc2626;
+}
+
+.settings-danger-desc {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 20px;
+  line-height: 1.6;
+}
+
+.settings-btn-danger {
+  padding: 10px 20px;
+  background: transparent;
+  color: #dc2626;
+  border: 1.5px solid #dc2626;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.settings-btn-danger:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
+/* Modal */
+.settings-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.settings-modal {
+  background: #fff;
+  border-radius: 14px;
+  padding: 32px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.settings-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 12px;
+}
+
+.settings-modal-desc {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.settings-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.settings-modal-cancel {
+  padding: 9px 18px;
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.settings-modal-cancel:hover {
+  background: #e5e7eb;
+}
+
+.settings-modal-confirm {
+  padding: 9px 18px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.settings-modal-confirm:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.settings-modal-confirm:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

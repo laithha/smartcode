@@ -1,4 +1,3 @@
-from app.api.database import conn
 import app.api.dependencies.di as di
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel

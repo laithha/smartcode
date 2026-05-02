@@ -20,3 +20,12 @@ export interface ReviewResult {
     ai_solution: string;
     advice: string;
 }
+
+export interface Recommendation {
+    lesson_id: number;
+    title: string;
+    description: string;
+    language: string;
+    difficulty: string;
+    duration: number;
+}

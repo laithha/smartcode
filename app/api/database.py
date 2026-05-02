@@ -1,9 +1,9 @@
 import psycopg2
-
+import os
 conn = psycopg2.connect(
     host="localhost",
-    dbname="db_smartcode",
-    user="admin",
-    password="admin",
+    dbname=os.getenv("POSTGRES_DB"),
+    user=os.getenv("POSTGRES_USER"),
+    password=os.getenv("POSTGRES_PASSWORD"),
     port=5432
 )
