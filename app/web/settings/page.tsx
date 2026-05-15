@@ -8,6 +8,7 @@ interface UserInfo {
   id: number;
   email: string;
   is_admin: boolean;
+  username: string | null;
 }
 
 export default function SettingsPage() {
@@ -18,6 +19,10 @@ export default function SettingsPage() {
   const [changingPassword, setChangingPassword] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showOnLeaderboard, setShowOnLeaderboard] = useState(true);
+  const [updatingVisibility, setUpdatingVisibility] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
+  const [updatingUsername, setUpdatingUsername] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -25,14 +30,15 @@ export default function SettingsPage() {
     const user_id = localStorage.getItem("user_id");
     if (!token || !user_id) return;
 
-    fetch(`http://localhost:8000/users/${user_id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const u = data.user;
-        if (u) setUser({ id: u[0], email: u[1], is_admin: u[3] });
-      });
+    const headers = { Authorization: `Bearer ${token}` };
+    Promise.all([
+      fetch(`http://localhost:8000/users/${user_id}`, { headers }).then(r => r.json()),
+      fetch(`http://localhost:8000/users/${user_id}/leaderboard-visibility`, { headers }).then(r => r.json()),
+    ]).then(([userData, visData]) => {
+      const u = userData.user;
+      if (u) setUser({ id: u[0], email: u[1], is_admin: u[3], username: u[8] ?? null });
+      if (visData.show_on_leaderboard !== undefined) setShowOnLeaderboard(visData.show_on_leaderboard);
+    });
   }, []);
 
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -62,6 +68,52 @@ export default function SettingsPage() {
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
+  };
+
+  const handleUpdateUsername = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    const user_id = localStorage.getItem("user_id");
+    setUpdatingUsername(true);
+    const res = await fetch(`http://localhost:8000/users/${user_id}/username`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ username: newUsername }),
+    });
+    const data = await res.json();
+    setUpdatingUsername(false);
+    if (!res.ok) {
+      toast.error(data.detail || "Failed to update username");
+      return;
+    }
+    setUser((prev) => prev ? { ...prev, username: newUsername } : prev);
+    setNewUsername("");
+    toast.success("Username updated!");
+  };
+
+  const handleLeaderboardToggle = async (value: boolean) => {
+    const token = localStorage.getItem("token");
+    const user_id = localStorage.getItem("user_id");
+    setShowOnLeaderboard(value);
+    setUpdatingVisibility(true);
+    const res = await fetch(`http://localhost:8000/users/${user_id}/leaderboard-visibility`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ show_on_leaderboard: value }),
+    });
+    setUpdatingVisibility(false);
+    if (!res.ok) {
+      setShowOnLeaderboard(!value);
+      toast.error("Failed to update leaderboard visibility");
+      return;
+    }
+    toast.success(value ? "You are now visible on the leaderboard" : "You are now hidden from the leaderboard");
   };
 
   const handleDeleteAccount = async () => {
@@ -107,6 +159,37 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Username */}
+        <div className="settings-card">
+          <h2 className="settings-section-title">Display Name</h2>
+          <p style={{ fontSize: "13px", color: "#6b7280", margin: "0 0 16px" }}>
+            This is the name shown on the leaderboard.{" "}
+            {user?.username ? (
+              <>Current: <strong>{user.username}</strong></>
+            ) : (
+              "You haven't set one yet — your email prefix is used as fallback."
+            )}
+          </p>
+          <form className="settings-form" onSubmit={handleUpdateUsername}>
+            <div className="settings-field">
+              <label className="settings-label">New Username</label>
+              <input
+                className="settings-input"
+                type="text"
+                placeholder="e.g. coder123"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                minLength={3}
+                maxLength={50}
+                required
+              />
+            </div>
+            <button className="settings-btn" type="submit" disabled={updatingUsername}>
+              {updatingUsername ? "Saving..." : "Save Username"}
+            </button>
+          </form>
+        </div>
+
         {/* Change Password */}
         <div className="settings-card">
           <h2 className="settings-section-title">Change Password</h2>
@@ -148,6 +231,27 @@ export default function SettingsPage() {
               {changingPassword ? "Saving..." : "Update Password"}
             </button>
           </form>
+        </div>
+
+        {/* Leaderboard Visibility */}
+        <div className="settings-card">
+          <h2 className="settings-section-title">Privacy</h2>
+          <div className="settings-info-row">
+            <div>
+              <span className="settings-info-label">Show me on the leaderboard</span>
+              <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#9ca3af" }}>
+                When enabled, your rank and lessons completed are visible to all users.
+              </p>
+            </div>
+            <button
+              className={`settings-toggle ${showOnLeaderboard ? "settings-toggle-on" : "settings-toggle-off"}`}
+              onClick={() => handleLeaderboardToggle(!showOnLeaderboard)}
+              disabled={updatingVisibility}
+              aria-label="Toggle leaderboard visibility"
+            >
+              <span className="settings-toggle-thumb" />
+            </button>
+          </div>
         </div>
 
         {/* Danger Zone */}

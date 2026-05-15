@@ -57,3 +57,25 @@ class UserRepository:
             (new_hashed_password, email)
         )
         self.db.commit()
+
+    def update_username(self, user_id, username):
+        self.cursor.execute(
+            "UPDATE users SET username = %s WHERE id = %s",
+            (username, user_id)
+        )
+        self.db.commit()
+
+    def update_leaderboard_visibility(self, user_id, show_on_leaderboard):
+        self.cursor.execute(
+            "UPDATE users SET show_on_leaderboard = %s WHERE id = %s",
+            (show_on_leaderboard, user_id)
+        )
+        self.db.commit()
+
+    def get_leaderboard_visibility(self, user_id):
+        self.cursor.execute(
+            "SELECT show_on_leaderboard FROM users WHERE id = %s",
+            (user_id,)
+        )
+        row = self.cursor.fetchone()
+        return row[0] if row else None

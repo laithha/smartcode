@@ -13,18 +13,16 @@ interface Props {
 }
 
 export default function ReviewModal({ result, code, onClose }: Props) {
-    const correct = result.verdict === "CORRECT";
-
     return (
         <div className="rm-overlay" onClick={onClose}>
             <div className="rm-box" onClick={(e) => e.stopPropagation()}>
 
-                <div className={`rm-header ${correct ? "rm-header-correct" : "rm-header-incorrect"}`}>
+                <div className="rm-header rm-header-neutral">
                     <div className="rm-header-left">
-                        <span className="rm-verdict-icon">{correct ? "✓" : "✗"}</span>
+                        <span className="rm-verdict-icon">🤖</span>
                         <div>
-                            <p className="rm-verdict-label">{correct ? "All good!" : "Not quite"}</p>
-                            <h2 className="rm-verdict-title">{correct ? "Correct Solution" : "Incorrect Solution"}</h2>
+                            <p className="rm-verdict-label">AI Review</p>
+                            <h2 className="rm-verdict-title">Code Feedback</h2>
                         </div>
                     </div>
                     <button className="rm-close" onClick={onClose}>✕</button>

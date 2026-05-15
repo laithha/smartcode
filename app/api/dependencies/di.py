@@ -11,6 +11,10 @@ from app.api.service.lesson_service import LessonService
 from app.api.Repository.tip_repository import TipRepository
 from app.api.service.tip_service import TipService
 from app.api.service.ai_service import AIService
+from app.api.Repository.leaderboard_repository import LeaderboardRepository
+from app.api.service.leaderboard_service import LeaderboardService
+from app.api.Repository.submissions_repository import SubmissionsRepository
+from app.api.service.submissions_service import SubmissionsService
 ai_service = AIService()
 tip_repo = TipRepository(conn)
 tip_service = TipService(tip_repo)
@@ -20,6 +24,10 @@ lesson_repo = LessonRepository(conn)
 lesson_service = LessonService(lesson_repo)
 progress_repo = ProgressRepository(conn)
 progress_service = ProgressService(progress_repo, lesson_repo)
+leaderboard_repo = LeaderboardRepository(conn)
+leaderboard_service = LeaderboardService(leaderboard_repo)
+submissions_repo = SubmissionsRepository(conn)
+submissions_service = SubmissionsService(submissions_repo)
 def get_user_service() ->UserService:
     return user_service
 
@@ -38,6 +46,12 @@ def get_tip_service() -> TipService:
 
 def get_ai_service()->AIService:
      return ai_service
+
+def get_leaderboard_service() -> LeaderboardService:
+    return leaderboard_service
+
+def get_submissions_service() -> SubmissionsService:
+    return submissions_service
 
 def get_admin_user(current_user = Depends(get_current_user)):
       user = user_repo.get_user_by_id(int(current_user))

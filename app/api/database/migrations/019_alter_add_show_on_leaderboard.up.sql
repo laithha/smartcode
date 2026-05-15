@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN show_on_leaderboard BOOLEAN DEFAULT True;

@@ -114,6 +114,7 @@
   outline: none;
   transition: border-color 0.2s;
   background: #fafafa;
+  color: #111827;
 }
 
 .settings-input:focus {
@@ -142,6 +143,51 @@
 .settings-btn:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+/* Toggle switch */
+.settings-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  padding: 0;
+}
+
+.settings-toggle-on {
+  background: #7c3aed;
+}
+
+.settings-toggle-off {
+  background: #d1d5db;
+}
+
+.settings-toggle:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.settings-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.settings-toggle-on .settings-toggle-thumb {
+  left: 23px;
+}
+
+.settings-toggle-off .settings-toggle-thumb {
+  left: 3px;
 }
 
 /* Danger zone */

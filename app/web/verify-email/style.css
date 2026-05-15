@@ -66,25 +66,14 @@
 .d1-sub {
   font-size: 14px;
   color: #6b7280;
-  margin: 0 0 36px;
+  margin: 0 0 28px;
+  line-height: 1.6;
 }
 
 .d1-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.d1-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.d1-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
 }
 
 .d1-input {
@@ -104,8 +93,6 @@
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 
-.d1-input::placeholder { color: #9ca3af; }
-
 .d1-btn {
   padding: 13px;
   border-radius: 10px;
@@ -117,7 +104,6 @@
   font-family: 'Inter', sans-serif;
   cursor: pointer;
   transition: background 0.2s, transform 0.15s;
-  margin-top: 4px;
 }
 
 .d1-btn:hover:not(:disabled) {

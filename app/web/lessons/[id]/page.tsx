@@ -7,7 +7,98 @@ import toast from "react-hot-toast";
 import { MONACO_LANG_MAP, Lesson, ReviewResult, Recommendation } from "./utils";
 import "./style.css";
 
-type Tab = "problem" | "example" | "hints" | "theory";
+type Tab = "problem" | "example" | "hints" | "theory" | "askai" | "history";
+
+function isCodeLine(line: string): boolean {
+    const t = line.trim();
+    if (!t) return false;
+    return (
+        /^(def |class |return |import |from |if |else:|elif |for |while |try:|except|with |print\(|self\.|my_|#)/.test(t) ||
+        /[←→]/.test(t) ||
+        line.startsWith("    ") ||
+        /^[a-z_]+\s*=\s*/.test(t) ||
+        (/\(.*\)/.test(t) && /^[a-z_]/.test(t))
+    );
+}
+
+function isHeadingLine(line: string): boolean {
+    const t = line.trim();
+    if (!t || t.length < 4) return false;
+    return t === t.toUpperCase() && /[A-Z]/.test(t) && !/[{};]/.test(t);
+}
+
+function renderTheory(content: string) {
+    const lines = content.split("\n");
+    const elements: React.ReactNode[] = [];
+    let codeLines: string[] = [];
+    let listItems: string[] = [];
+    let key = 0;
+
+    const flushCode = () => {
+        if (codeLines.length > 0) {
+            elements.push(
+                <div key={key++} className="v2-theory-code-block">
+                    <pre className="v2-theory-code-pre">{codeLines.join("\n")}</pre>
+                </div>
+            );
+            codeLines = [];
+        }
+    };
+
+    const flushList = () => {
+        if (listItems.length > 0) {
+            elements.push(
+                <ul key={key++} className="v2-theory-list">
+                    {listItems.map((item, i) => <li key={i}>{item}</li>)}
+                </ul>
+            );
+            listItems = [];
+        }
+    };
+
+    lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) { flushCode(); flushList(); return; }
+
+        if (trimmed.startsWith("# ")) {
+            flushCode(); flushList();
+            elements.push(<h2 key={key++} className="v2-theory-h1">{trimmed.slice(2)}</h2>);
+        } else if (trimmed.startsWith("## ")) {
+            flushCode(); flushList();
+            elements.push(<h3 key={key++} className="v2-theory-h2">{trimmed.slice(3)}</h3>);
+        } else if (isHeadingLine(line)) {
+            flushCode(); flushList();
+            elements.push(<h3 key={key++} className="v2-theory-h2">{trimmed}</h3>);
+        } else if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+            flushCode();
+            listItems.push(trimmed.slice(2));
+        } else if (/^\d+\.\s/.test(trimmed)) {
+            flushCode();
+            listItems.push(trimmed.replace(/^\d+\.\s/, ""));
+        } else if (isCodeLine(line)) {
+            flushList();
+            codeLines.push(line);
+        } else {
+            flushCode(); flushList();
+            elements.push(<p key={key++} className="v2-theory-p">{trimmed}</p>);
+        }
+    });
+    flushCode();
+    flushList();
+    return <div className="v2-theory-body">{elements}</div>;
+}
+
+interface ChatMessage {
+    role: "user" | "ai";
+    text: string;
+}
+
+interface Submission {
+    submission_id: number;
+    code: string;
+    language: string;
+    submitted_at: string;
+}
 
 const DIFF_STYLE: Record<string, { color: string; bg: string }> = {
     beginner:     { color: "#16a34a", bg: "#dcfce7" },
@@ -34,7 +125,12 @@ export default function LessonPage() {
     const [reviewResult, setReviewResult] = useState<ReviewResult | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
-    const [activeTab, setActiveTab] = useState<Tab>("problem");
+    const [activeTab, setActiveTab] = useState<Tab>("theory");
+    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [chatInput, setChatInput] = useState("");
+    const [chatLoading, setChatLoading] = useState(false);
+    const [submissions, setSubmissions] = useState<Submission[]>([]);
+    const [expandedSubmission, setExpandedSubmission] = useState<number | null>(null);
     const { id } = useParams();
 
     useEffect(() => {
@@ -64,6 +160,15 @@ export default function LessonPage() {
                     const recData = await recRes.json();
                     if (recData.lesson_id) setRecommendation(recData);
                 }
+            }
+            if (token && user_id) {
+                try {
+                    const subRes = await fetch(`http://localhost:8000/submissions?user_id=${user_id}&lesson_id=${id}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    const subData = await subRes.json();
+                    setSubmissions(subData.submissions ?? []);
+                } catch { setSubmissions([]); }
             }
             setLoading(false);
         };
@@ -102,11 +207,20 @@ export default function LessonPage() {
             const reviewRes = await fetch("http://localhost:8000/ai-review", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ code, language: lesson?.language || "python", lesson_title: lesson?.title || "", lesson_description: lesson?.description || "" }),
+                body: JSON.stringify({ code, language: lesson?.language || "python", lesson_title: lesson?.title || "", lesson_description: lesson?.description || "", lesson_task: taskTips.map(t => t.message).join("\n") }),
             });
             const result: ReviewResult = (await reviewRes.json()).feedback;
             setReviewResult(result);
             setShowModal(true);
+
+            await fetch("http://localhost:8000/submissions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ user_id: parseInt(user_id), lesson_id: parseInt(id as string), code, language: lesson?.language || "python" }),
+            });
+            const now = new Date();
+            const submitted_at = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")} ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+            setSubmissions(prev => [{ submission_id: Date.now(), code, language: lesson?.language || "python", submitted_at }, ...prev]);
 
             if (result.verdict === "CORRECT") {
                 toast.success("Lesson completed! Great work 🎉");
@@ -142,6 +256,30 @@ export default function LessonPage() {
     const exampleTips = tips.filter(t => t.category === "example");
     const hintTips = tips.filter(t => t.category === "hint");
 
+    const sendHint = async () => {
+        if (!chatInput.trim() || chatLoading) return;
+        const token = localStorage.getItem("token");
+        const question = chatInput.trim();
+        const newMessages: ChatMessage[] = [...chatMessages, { role: "user", text: question }];
+        setChatMessages(newMessages);
+        setChatInput("");
+        setChatLoading(true);
+        try {
+            const history = chatMessages.map(m => ({ role: m.role === "ai" ? "assistant" : "user", content: m.text }));
+            const res = await fetch("http://localhost:8000/ai-hint", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ question, lesson_title: lesson?.title || "", lesson_description: lesson?.description || "", language: lesson?.language || "python", conversation_history: history }),
+            });
+            const data = await res.json();
+            setChatMessages([...newMessages, { role: "ai", text: data.answer }]);
+        } catch {
+            setChatMessages([...newMessages, { role: "ai", text: "Sorry, I couldn't respond. Please try again." }]);
+        } finally {
+            setChatLoading(false);
+        }
+    };
+
     return (
         <div className="v2-root">
             {showModal && reviewResult && <ReviewModal result={reviewResult} code={code} onClose={() => setShowModal(false)} />}
@@ -168,18 +306,20 @@ export default function LessonPage() {
                 {/* Left panel */}
                 <div className="v2-left">
                     <div className="v2-tabs">
-                        {(["problem", "example", "hints", "theory"] as Tab[]).map(tab => (
+                        {(["theory", "problem", "example", "hints", "askai", "history"] as Tab[]).map(tab => (
                             <button key={tab} className={`v2-tab ${activeTab === tab ? "v2-tab-active" : ""}`} onClick={() => setActiveTab(tab)}>
+                                {tab === "theory" && "📖 Theory"}
                                 {tab === "problem" && "🎯 Problem"}
                                 {tab === "example" && "📝 Example"}
                                 {tab === "hints" && "💡 Hints"}
-                                {tab === "theory" && "📖 Theory"}
+                                {tab === "askai" && "🤖 Ask AI"}
+                                {tab === "history" && "🕓 History"}
                             </button>
                         ))}
                     </div>
 
                     <div className="v2-tab-content">
-                        {recommendation && (
+                        {recommendation && activeTab !== "askai" && activeTab !== "history" && (
                             <a href={`/web/lessons/${recommendation.lesson_id}`} className="v2-next-banner">
                                 <div>
                                     <span className="v2-next-label">Up Next</span>
@@ -192,10 +332,18 @@ export default function LessonPage() {
                         {activeTab === "problem" && (
                             <div className="v2-content-body">
                                 <p className="v2-description">{lesson.description}</p>
-                                {taskTips.length > 0
-                                    ? taskTips.map(t => <p key={t.tip_id} className="v2-task-text">{t.message}</p>)
-                                    : <p className="v2-empty">No task available yet.</p>
-                                }
+                                {taskTips.length > 0 ? (
+                                    <div className="v2-task-list">
+                                        {taskTips.map((t, i) => (
+                                            <div key={t.tip_id} className="v2-task-item">
+                                                <span className="v2-task-num">{i + 1}</span>
+                                                <span className="v2-task-msg">{t.message}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="v2-empty">No task available yet.</p>
+                                )}
                             </div>
                         )}
 
@@ -232,7 +380,69 @@ export default function LessonPage() {
 
                         {activeTab === "theory" && (
                             <div className="v2-content-body">
-                                <pre className="v2-theory-text">{lesson.content || "No content available yet."}</pre>
+                                {lesson.content
+                                    ? renderTheory(lesson.content)
+                                    : <p className="v2-empty">No content available yet.</p>
+                                }
+                            </div>
+                        )}
+
+                        {activeTab === "askai" && (
+                            <div className="v2-chat-root">
+                                <div className="v2-chat-messages">
+                                    {chatMessages.length === 0 && (
+                                        <div className="v2-chat-empty">
+                                            <span>🤖</span>
+                                            <p>Ask me anything about this lesson.<br/>I won't give you the solution — but I'll help you think it through.</p>
+                                        </div>
+                                    )}
+                                    {chatMessages.map((msg, i) => (
+                                        <div key={i} className={`v2-chat-msg ${msg.role === "user" ? "v2-chat-user" : "v2-chat-ai"}`}>
+                                            <span className="v2-chat-bubble">{msg.text}</span>
+                                        </div>
+                                    ))}
+                                    {chatLoading && (
+                                        <div className="v2-chat-msg v2-chat-ai">
+                                            <span className="v2-chat-bubble v2-chat-typing">Thinking...</span>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="v2-chat-inputrow">
+                                    <input
+                                        className="v2-chat-input"
+                                        placeholder="Ask a question..."
+                                        value={chatInput}
+                                        onChange={e => setChatInput(e.target.value)}
+                                        onKeyDown={e => e.key === "Enter" && sendHint()}
+                                        disabled={chatLoading}
+                                    />
+                                    <button className="v2-chat-send" onClick={sendHint} disabled={chatLoading || !chatInput.trim()}>
+                                        Send
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === "history" && (
+                            <div className="v2-content-body">
+                                {submissions.length === 0 ? (
+                                    <p className="v2-empty">No submissions yet. Submit your code to see your history here.</p>
+                                ) : (
+                                    <div className="v2-history-list">
+                                        {submissions.map((sub, i) => (
+                                            <div key={sub.submission_id} className="v2-history-item">
+                                                <div className="v2-history-header" onClick={() => setExpandedSubmission(expandedSubmission === sub.submission_id ? null : sub.submission_id)}>
+                                                    <span className="v2-history-num">Attempt {submissions.length - i}</span>
+                                                    <span className="v2-history-date">{sub.submitted_at}</span>
+                                                    <span className="v2-history-chevron">{expandedSubmission === sub.submission_id ? "▲" : "▼"}</span>
+                                                </div>
+                                                {expandedSubmission === sub.submission_id && (
+                                                    <pre className="v2-history-code">{sub.code}</pre>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

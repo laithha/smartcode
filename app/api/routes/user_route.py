@@ -2,7 +2,7 @@ from app.api.service.user_service import UserService
 from app.api.Repository.user_repository import UserRepository
 import app.api.dependencies.di as di
 from app.api.dependencies.di import get_current_user, get_admin_user
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 router = APIRouter()
@@ -44,7 +44,6 @@ def delete_user(user_id: int, current_user = Depends(get_current_user)):
     user = di.user_repo.get_user_by_id(int(current_user))
     is_admin = user is not None and user[3] == True
     if int(current_user) != user_id and not is_admin:
-        from fastapi import HTTPException
         raise HTTPException(status_code=403, detail="Forbidden")
     service = di.get_user_service()
     return service.delete_user(user_id)
@@ -74,7 +73,6 @@ class ChangePasswordRequest(BaseModel):
 @router.put("/users/{user_id}/password", tags=["users"])
 def change_password(user_id: int, request: ChangePasswordRequest, current_user = Depends(get_current_user)):
     if int(current_user) != user_id:
-        from fastapi import HTTPException
         raise HTTPException(status_code=403, detail="Forbidden")
     service = di.get_user_service()
     return service.change_password(user_id, request.current_password, request.new_password)
@@ -96,6 +94,16 @@ class ResetPasswordRequest(BaseModel):
 def reset_password(request: ResetPasswordRequest):
     service = di.get_user_service()
     return service.reset_password(request.email, request.code, request.new_password)
+
+class UsernameRequest(BaseModel):
+    username: str
+
+@router.put("/users/{user_id}/username", tags=["users"])
+def update_username(user_id: int, request: UsernameRequest, current_user = Depends(get_current_user)):
+    if int(current_user) != user_id:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    service = di.get_user_service()
+    return service.update_username(user_id, request.username)
 
 class AdminStatusRequest(BaseModel):
     is_admin: bool

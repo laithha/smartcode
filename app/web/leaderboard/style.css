@@ -1,0 +1,137 @@
+.lb-root {
+  min-height: 100vh;
+  background: #f8f9fb;
+  padding: 48px 24px;
+  box-sizing: border-box;
+}
+
+.lb-container {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.lb-header {
+  margin-bottom: 8px;
+}
+
+.lb-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 6px;
+}
+
+.lb-sub {
+  font-size: 15px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.lb-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.lb-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lb-th {
+  padding: 14px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.lb-th-rank { width: 80px; }
+.lb-th-count { width: 100px; text-align: right; }
+
+.lb-row {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.15s;
+}
+
+.lb-row:last-child {
+  border-bottom: none;
+}
+
+.lb-row:hover {
+  background: #fafafa;
+}
+
+.lb-row-me {
+  background: #f5f3ff;
+}
+
+.lb-row-me:hover {
+  background: #ede9fe;
+}
+
+.lb-td {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: #111;
+}
+
+.lb-td-rank {
+  width: 80px;
+}
+
+.lb-td-count {
+  width: 100px;
+  text-align: right;
+}
+
+.lb-rank-badge {
+  font-size: 18px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.lb-td-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lb-email {
+  font-weight: 500;
+  color: #111;
+}
+
+.lb-you-tag {
+  font-size: 11px;
+  font-weight: 600;
+  background: #ede9fe;
+  color: #7c3aed;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.lb-count {
+  font-weight: 700;
+  color: #7c3aed;
+  font-size: 15px;
+}
+
+.lb-loading,
+.lb-empty {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 15px;
+  color: #6b7280;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+}

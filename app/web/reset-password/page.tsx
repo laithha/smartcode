@@ -1,16 +1,14 @@
 "use client";
 import { useState, useRef, useEffect, Suspense } from "react";
-import "../login/style.css";
+import "./style.css";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
 
 function ResetPasswordContent() {
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -47,7 +45,6 @@ function ResetPasswordContent() {
     const code = digits.join("");
     if (code.length < 6) { toast.error("Enter the full 6-digit code"); return; }
     if (password !== confirm) { toast.error("Passwords do not match"); return; }
-
     setLoading(true);
     const res = await fetch("http://localhost:8000/reset-password", {
       method: "POST",
@@ -56,41 +53,31 @@ function ResetPasswordContent() {
     });
     const data = await res.json();
     setLoading(false);
-
     if (!res.ok) {
       toast.error(data.detail || "Something went wrong");
       return;
     }
-
     toast.success("Password reset! Redirecting to login...");
     localStorage.removeItem("reset_email");
-    setDone(true);
-    setTimeout(() => router.push("/web/login"), 800);
+    router.push("/web/login");
   };
 
   return (
-    <div className="lv2-root">
-
-      <motion.div
-        className="lv2-left"
-        initial={{ opacity: 0, x: -24 }}
-        animate={{ opacity: done ? 0 : 1, x: done ? -10 : 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <p className="lv2-logo">SmartCode</p>
-
-        <h1 className="lv2-heading">Reset your password</h1>
-        <p className="lv2-sub">
+    <div className="d1-root">
+      <div className="d1-card">
+        <p className="d1-logo">SmartCode</p>
+        <h1 className="d1-heading">Reset your password</h1>
+        <p className="d1-sub">
           Enter the 6-digit code sent to <strong>{email || "your email"}</strong> and choose a new password.
         </p>
 
-        <form className="lv2-form" onSubmit={handleSubmit}>
-          <div style={{ display: "flex", gap: "10px", justifyContent: "center", margin: "8px 0 16px" }}>
+        <form className="d1-form" onSubmit={handleSubmit}>
+          <div style={{ display: "flex", gap: "10px", justifyContent: "center", margin: "8px 0 8px" }}>
             {digits.map((d, i) => (
               <input
                 key={i}
                 ref={(el) => { inputs.current[i] = el; }}
-                className="lv2-input"
+                className="d1-input"
                 type="text"
                 inputMode="numeric"
                 maxLength={1}
@@ -99,22 +86,21 @@ function ResetPasswordContent() {
                 onKeyDown={(e) => handleKeyDown(i, e)}
                 onPaste={handlePaste}
                 style={{
-                  width: "52px",
-                  height: "60px",
+                  width: "48px",
+                  height: "56px",
                   textAlign: "center",
-                  fontSize: "24px",
+                  fontSize: "22px",
                   fontWeight: 700,
                   padding: "0",
-                  letterSpacing: 0,
                 }}
               />
             ))}
           </div>
 
-          <div className="lv2-field">
-            <label className="lv2-label">New Password</label>
+          <div className="d1-field">
+            <label className="d1-label">New Password</label>
             <input
-              className="lv2-input"
+              className="d1-input"
               type="password"
               placeholder="••••••••"
               value={password}
@@ -122,11 +108,10 @@ function ResetPasswordContent() {
               required
             />
           </div>
-
-          <div className="lv2-field">
-            <label className="lv2-label">Confirm Password</label>
+          <div className="d1-field">
+            <label className="d1-label">Confirm Password</label>
             <input
-              className="lv2-input"
+              className="d1-input"
               type="password"
               placeholder="••••••••"
               value={confirm}
@@ -134,46 +119,14 @@ function ResetPasswordContent() {
               required
             />
           </div>
-
-          <button className="lv2-btn" type="submit" disabled={loading}>
+          <button className="d1-btn" type="submit" disabled={loading}>
             {loading ? "Resetting..." : "Reset Password"}
           </button>
-
-          <p className="lv2-footer">
+          <p className="d1-footer">
             Wrong email? <a href="/web/forgot-password">Go back</a>
           </p>
         </form>
-      </motion.div>
-
-      <div className="lv2-right">
-        <div className="lv2-blob1" />
-        <div className="lv2-blob2" />
-
-        <h2 className="lv2-tagline">Almost there.</h2>
-        <p className="lv2-tagline-sub">Enter the code from your email and set a new secure password.</p>
-
-        <div className="lv2-cards">
-          <div className="lv2-card">
-            <div className="lv2-card-icon">
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-            </div>
-            <div>
-              <p className="lv2-card-title">Code expires in 15 min</p>
-              <p className="lv2-card-desc">Check your inbox and enter the code quickly.</p>
-            </div>
-          </div>
-          <div className="lv2-card">
-            <div className="lv2-card-icon">
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-            </div>
-            <div>
-              <p className="lv2-card-title">Use a strong password</p>
-              <p className="lv2-card-desc">At least 8 characters to keep your account secure.</p>
-            </div>
-          </div>
-        </div>
       </div>
-
     </div>
   );
 }

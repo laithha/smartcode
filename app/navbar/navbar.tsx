@@ -34,7 +34,7 @@ export default function Navbar() {
         <a href="/">Home</a>
         <a href="/web/lessons">Lessons</a>
         <a href="/web/progress">Progress</a>
-        <a href="">About</a>
+        <a href="/web/leaderboard">Leaderboard</a>
         {isAdmin && <a href="/web/admin">Admin</a>}
         <a href="/web/settings">Settings</a>
       </div>

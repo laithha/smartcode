@@ -123,9 +123,28 @@ class UserService:
         self.repo.update_user_admin_status(user_id, is_admin)
         return {"message" : "updated successfully"}
     
-    def delete_user(self,user_id):
-        user = self.repo.get_user_by_id(user_id)
-        if user is None:
-            raise HTTPException(status_code=404)
+    def delete_user(self, user_id):
+        self.get_user_by_id(user_id)
         self.repo.delete_user(user_id)
-        return{"message" : "deleted account successfully"}
+        return {"message": "deleted account successfully"}
+
+    def update_username(self, user_id, username):
+        self.get_user_by_id(user_id)
+        if len(username) < 3:
+            raise HTTPException(status_code=400, detail="Username must be at least 3 characters")
+        if len(username) > 50:
+            raise HTTPException(status_code=400, detail="Username must be at most 50 characters")
+        try:
+            self.repo.update_username(user_id, username)
+        except Exception:
+            raise HTTPException(status_code=409, detail="Username already taken")
+        return {"message": "Username updated successfully"}
+
+    def update_leaderboard_visibility(self, user_id, show_on_leaderboard):
+        self.get_user_by_id(user_id)
+        self.repo.update_leaderboard_visibility(user_id, show_on_leaderboard)
+        return {"message": "Leaderboard visibility updated"}
+
+    def get_leaderboard_visibility(self, user_id):
+        self.get_user_by_id(user_id)
+        return {"show_on_leaderboard": self.repo.get_leaderboard_visibility(user_id)}
