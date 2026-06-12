@@ -1,10 +1,12 @@
 import React from "react";
 
 export const MONACO_LANG_MAP: Record<string, string> = {
-    python: "python", javascript: "javascript", java: "java",
-    "c++": "cpp", cpp: "cpp", c: "c", "c#": "csharp",
-    csharp: "csharp", ruby: "ruby", go: "go", rust: "rust",
-    php: "php", typescript: "typescript",
+    python: "python",
+    javascript: "javascript",
+    java: "java",
+    "c++": "cpp",
+    cpp: "cpp",
+    c: "c",
 };
 
 export interface Lesson {

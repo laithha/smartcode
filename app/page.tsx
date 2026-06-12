@@ -26,7 +26,7 @@ const LANGUAGES = [
     { icon: "🟨", name: "JavaScript" },
     { icon: "☕", name: "Java" },
     { icon: "💎", name: "C++" },
-    { icon: "🦀", name: "Rust" },
+    { icon: "⚙️", name: "C" },
 ];
 
 export default function HomePage() {
