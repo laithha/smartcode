@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { CreateLessonForm, inputStyle } from "../utils";
+import type { CreateLessonForm } from "../utils";
+import { inputStyle } from "../utils";
 
 interface Props {
     onCreated: () => void;

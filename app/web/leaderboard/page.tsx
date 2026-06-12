@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../lib/useAuth";
 import "./style.css";
 
 interface LeaderboardEntry {
@@ -10,6 +11,7 @@ interface LeaderboardEntry {
 }
 
 export default function LeaderboardPage() {
+  const authenticated = useAuth();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
@@ -32,6 +34,8 @@ export default function LeaderboardPage() {
     if (rank === 3) return "🥉";
     return null;
   };
+
+  if (!authenticated) return null;
 
   return (
     <div className="lb-root">

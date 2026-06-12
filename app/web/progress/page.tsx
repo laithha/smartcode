@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { langConf, diffConf } from "../../lib/constants";
+import { useAuth } from "../../lib/useAuth";
 import "./style.css";
 
 interface ProgressItem {
@@ -21,21 +23,8 @@ interface Recommendation {
     duration: number;
 }
 
-const LANG_COLORS: Record<string, { color: string; bg: string }> = {
-    python:     { color: "#3b82f6", bg: "#eff6ff" },
-    javascript: { color: "#d97706", bg: "#fffbeb" },
-    java:       { color: "#dc2626", bg: "#fef2f2" },
-    c:          { color: "#7c3aed", bg: "#f5f3ff" },
-    cpp:        { color: "#0891b2", bg: "#ecfeff" },
-};
-
-const DIFF_CONFIG: Record<string, { color: string; bg: string }> = {
-    beginner:     { color: "#16a34a", bg: "#f0fdf4" },
-    intermediate: { color: "#d97706", bg: "#fffbeb" },
-    advanced:     { color: "#dc2626", bg: "#fef2f2" },
-};
-
 export default function ProgressPage() {
+    const authenticated = useAuth();
     const [progress, setProgress] = useState<ProgressItem[]>([]);
     const [total, setTotal] = useState(0);
     const [streak, setStreak] = useState(0);
@@ -65,8 +54,8 @@ export default function ProgressPage() {
     }, []);
 
     const pct = total > 0 ? Math.round((progress.length / total) * 100) : 0;
-    const langConf = (l: string) => LANG_COLORS[l?.toLowerCase()] ?? { color: "#6366f1", bg: "#eef2ff" };
-    const diffConf = (d: string) => DIFF_CONFIG[d?.toLowerCase()] ?? { color: "#6b7280", bg: "#f9fafb" };
+
+    if (!authenticated) return null;
 
     if (loading) {
         return (

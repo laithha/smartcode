@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../lib/useAuth";
 import "./style.css";
 
 interface UserInfo {
@@ -12,6 +13,7 @@ interface UserInfo {
 }
 
 export default function SettingsPage() {
+  const authenticated = useAuth();
   const [user, setUser] = useState<UserInfo | null>(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -134,6 +136,8 @@ export default function SettingsPage() {
     toast.success("Account deleted");
     setTimeout(() => router.push("/web/register"), 800);
   };
+
+  if (!authenticated) return null;
 
   return (
     <div className="settings-root">

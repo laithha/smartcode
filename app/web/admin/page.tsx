@@ -1,13 +1,17 @@
 "use client";
 import { useState } from "react";
 import { useAdmin } from "./hooks/useAdmin";
+import { useAuth } from "../../lib/useAuth";
 import UsersTable from "./components/UsersTable";
 import LessonsTable from "./components/LessonsTable";
 import CreateLessonForm from "./components/CreateLessonForm";
 
 export default function AdminPage() {
+    const authenticated = useAuth();
     const [tab, setTab] = useState<"users" | "lessons">("users");
     const { users, lessons, loading, deleteUser, toggleAdmin, deleteLesson, refetchLessons } = useAdmin();
+
+    if (!authenticated) return null;
 
     if (loading) {
         return (
