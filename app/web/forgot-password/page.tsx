@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { API_URL } from "@/app/lib/api";
 import "./style.css";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -12,7 +13,7 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const res = await fetch("http://localhost:8000/forgot-password", {
+    const res = await fetch(`${API_URL}/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),

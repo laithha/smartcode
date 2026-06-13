@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { API_URL } from "@/app/lib/api";
 import { motion } from "framer-motion";
 import { langConf, diffConf } from "../../lib/constants";
 import { useAuth } from "../../lib/useAuth";
@@ -35,7 +36,7 @@ export default function ProgressPage() {
         const fetchProgress = async () => {
             const user_id = localStorage.getItem("user_id");
             const token = localStorage.getItem("token");
-            const res = await fetch(`http://localhost:8000/progress/${user_id}`, {
+            const res = await fetch(`${API_URL}/progress/${user_id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await res.json();
@@ -44,7 +45,7 @@ export default function ProgressPage() {
             setStreak(data.user?.streak ?? 0);
             setLoading(false);
 
-            const recRes = await fetch(`http://localhost:8000/progress/${user_id}/recommendation`, {
+            const recRes = await fetch(`${API_URL}/progress/${user_id}/recommendation`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const recData = await recRes.json();

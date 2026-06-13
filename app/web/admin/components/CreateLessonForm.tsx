@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { API_URL } from "@/app/lib/api";
 import type { CreateLessonForm } from "../utils";
 import { inputStyle } from "../utils";
 
@@ -23,7 +24,7 @@ export default function CreateLessonForm({ onCreated }: Props) {
         }
         setLoading(true);
         const token = localStorage.getItem("token")!;
-        const res = await fetch("http://localhost:8000/lessons", {
+        const res = await fetch(`${API_URL}/lessons`, {
             method: "POST",
             headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
             body: JSON.stringify({ ...form, duration: parseInt(form.duration) }),

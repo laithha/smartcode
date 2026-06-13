@@ -1,0 +1,1 @@
+ALTER TABLE users ALTER COLUMN show_on_leaderboard SET DEFAULT TRUE;

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { API_URL } from "@/app/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { langConf, diffConf } from "../../lib/constants";
 import { useAuth } from "../../lib/useAuth";
@@ -17,7 +18,7 @@ export default function LessonsPage() {
     useEffect(() => {
         const fetchLessons = async () => {
             try {
-                const res = await fetch("http://localhost:8000/lessons");
+                const res = await fetch(`${API_URL}/lessons`);
                 const data = await res.json();
                 setLessons(Array.isArray(data) ? data : []);
             } catch (error) {

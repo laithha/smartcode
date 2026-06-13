@@ -5,12 +5,21 @@ class SubmissionsRepository:
         self.db = db_connection
         self.cursor = self.db.cursor()
 
+    def _write(self, query, params):
+        # Run a write and commit; roll back on failure so the shared connection
+        # is never left in an aborted-transaction state.
+        try:
+            self.cursor.execute(query, params)
+            self.db.commit()
+        except Exception:
+            self.db.rollback()
+            raise
+
     def create_submission(self, user_id, lesson_id, code, language):
-        self.cursor.execute(
+        self._write(
             "INSERT INTO submissions (user_id, lesson_id, code, language) VALUES (%s, %s, %s, %s)",
             (user_id, lesson_id, code, language)
         )
-        self.db.commit()
 
     def get_submissions_by_user_and_lesson(self, user_id, lesson_id):
         self.cursor.execute(

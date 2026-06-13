@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { API_URL } from "@/app/lib/api";
 import { ChatMessage, Lesson } from "../utils";
 
 interface Props {
@@ -21,7 +22,7 @@ export default function ChatInterface({ lesson }: Props) {
         setChatLoading(true);
         try {
             const history = chatMessages.map(m => ({ role: m.role === "ai" ? "assistant" : "user", content: m.text }));
-            const res = await fetch("http://localhost:8000/ai-hint", {
+            const res = await fetch(`${API_URL}/ai-hint`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({

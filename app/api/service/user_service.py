@@ -24,6 +24,30 @@ class UserService:
             return []
         return users
 
+    @staticmethod
+    def _check_password_length(password):
+        if len(password) < 8:
+            raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+
+    @staticmethod
+    def _public_user(row):
+        # Map a raw users row to a safe dict. NEVER include password_hash or the
+        # verification code/expiry — those must never leave the backend.
+        return {
+            "id": row[0],
+            "email": row[1],
+            "is_admin": row[3],
+            "is_verified": row[4],
+            "show_on_leaderboard": row[7],
+            "username": row[8],
+        }
+
+    def get_public_user_by_id(self, id):
+        return self._public_user(self.get_user_by_id(id))
+
+    def get_all_public_users(self):
+        return [self._public_user(row) for row in self.get_all_users()]
+
     def login(self, email, password):
         user_info = self.repo.get_user_by_email(email)
         if user_info is None:
@@ -41,8 +65,7 @@ class UserService:
         return {"access_token": token, "token_type": "bearer", "user_id": user_id}
     
     def create_user(self, email, password):
-        if len(password) < 8:
-            raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+        self._check_password_length(password)
         reg_check = self.repo.get_user_by_email(email)
         if reg_check is not None:
             raise HTTPException(status_code=409, detail=f"Account already exists for {email}")
@@ -87,8 +110,7 @@ class UserService:
             raise HTTPException(status_code=404, detail="User not found")
         if not pwd_context.verify(current_password, user[2]):
             raise HTTPException(status_code=400, detail="Current password is incorrect")
-        if len(new_password) < 8:
-            raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+        self._check_password_length(new_password)
         self.repo.update_password(user[1], pwd_context.hash(new_password))
         return {"message": "Password changed successfully"}
 
@@ -106,8 +128,7 @@ class UserService:
         user = self.repo.get_user_by_email(email)
         if user is None:
             raise HTTPException(status_code=404, detail="Account not found")
-        if len(new_password) < 8:
-            raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+        self._check_password_length(new_password)
         info = self.repo.get_verification_info(email)
         if info is None or info[0] is None:
             raise HTTPException(status_code=400, detail="No reset code found")

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { API_URL } from "@/app/lib/api";
 import { useParams } from "next/navigation";
 import Editor from "@monaco-editor/react";
 import ReviewModal from "./components/ReviewModal";
@@ -31,10 +32,10 @@ export default function LessonPage() {
 
     useEffect(() => {
         const fetchLesson = async () => {
-            const res = await fetch(`http://localhost:8000/lessons/${id}`);
+            const res = await fetch(`${API_URL}/lessons/${id}`);
             setLesson(await res.json());
             try {
-                const res2 = await fetch(`http://localhost:8000/tips?lesson_id=${id}`);
+                const res2 = await fetch(`${API_URL}/tips?lesson_id=${id}`);
                 const data2 = await res2.json();
                 setTips(Array.isArray(data2) ? data2 : []);
             } catch { setTips([]); }
@@ -42,7 +43,7 @@ export default function LessonPage() {
             const token = localStorage.getItem("token");
             const user_id = localStorage.getItem("user_id");
             if (token && user_id) {
-                const progRes = await fetch(`http://localhost:8000/progress/${user_id}`, {
+                const progRes = await fetch(`${API_URL}/progress/${user_id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const progData = await progRes.json();
@@ -50,14 +51,14 @@ export default function LessonPage() {
                     String(p.lesson_id) === String(id)
                 );
                 if (alreadyDone) {
-                    const recRes = await fetch(`http://localhost:8000/progress/${user_id}/recommendation`, {
+                    const recRes = await fetch(`${API_URL}/progress/${user_id}/recommendation`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     const recData = await recRes.json();
                     if (recData.lesson_id) setRecommendation(recData);
                 }
                 try {
-                    const subRes = await fetch(`http://localhost:8000/submissions?user_id=${user_id}&lesson_id=${id}`, {
+                    const subRes = await fetch(`${API_URL}/submissions?user_id=${user_id}&lesson_id=${id}`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     const subData = await subRes.json();
@@ -99,7 +100,7 @@ export default function LessonPage() {
         const taskTips = tips.filter(t => t.category === "task");
         setSubmitting(true);
         try {
-            const reviewRes = await fetch("http://localhost:8000/ai-review", {
+            const reviewRes = await fetch(`${API_URL}/ai-review`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({
@@ -114,7 +115,7 @@ export default function LessonPage() {
             setReviewResult(result);
             setShowModal(true);
 
-            await fetch("http://localhost:8000/submissions", {
+            await fetch(`${API_URL}/submissions`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ user_id: parseInt(user_id), lesson_id: parseInt(id as string), code, language: lesson?.language || "python" }),
@@ -125,12 +126,12 @@ export default function LessonPage() {
 
             if (result.verdict === "CORRECT") {
                 toast.success("Lesson completed! Great work 🎉");
-                await fetch("http://localhost:8000/progress", {
+                await fetch(`${API_URL}/progress`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                     body: JSON.stringify({ user_id: parseInt(user_id), lesson_id: parseInt(id as string), status: "completed" }),
                 });
-                const recRes = await fetch(`http://localhost:8000/progress/${user_id}/recommendation`, {
+                const recRes = await fetch(`${API_URL}/progress/${user_id}/recommendation`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const recData = await recRes.json();

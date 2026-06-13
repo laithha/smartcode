@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { API_URL } from "@/app/lib/api";
 import "./style.css";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -13,7 +14,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const res = await fetch("http://localhost:8000/login", {
+    const res = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -27,11 +28,11 @@ export default function LoginPage() {
     localStorage.setItem("token", data.access_token);
     localStorage.setItem("user_id", data.user_id);
     toast.success("Login successful");
-    const userRes = await fetch(`http://localhost:8000/users/${data.user_id}`, {
+    const userRes = await fetch(`${API_URL}/users/${data.user_id}`, {
       headers: { Authorization: `Bearer ${data.access_token}` },
     });
     const userData = await userRes.json();
-    const isAdmin = userData.user?.[3] === true;
+    const isAdmin = userData.user?.is_admin === true;
     router.replace(isAdmin ? "/web/admin" : "/");
   };
 

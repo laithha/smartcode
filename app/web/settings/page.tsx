@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { API_URL } from "@/app/lib/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../lib/useAuth";
@@ -33,14 +34,23 @@ export default function SettingsPage() {
     if (!token || !user_id) return;
 
     const headers = { Authorization: `Bearer ${token}` };
-    Promise.all([
-      fetch(`http://localhost:8000/users/${user_id}`, { headers }).then(r => r.json()),
-      fetch(`http://localhost:8000/users/${user_id}/leaderboard-visibility`, { headers }).then(r => r.json()),
-    ]).then(([userData, visData]) => {
-      const u = userData.user;
-      if (u) setUser({ id: u[0], email: u[1], is_admin: u[3], username: u[8] ?? null });
-      if (visData.show_on_leaderboard !== undefined) setShowOnLeaderboard(visData.show_on_leaderboard);
-    });
+
+    // Load account info and leaderboard visibility independently, so one failing
+    // request never blanks the whole page (e.g. email staying blank).
+    fetch(`${API_URL}/users/${user_id}`, { headers })
+      .then(r => r.json())
+      .then(userData => {
+        const u = userData.user;
+        if (u) setUser({ id: u.id, email: u.email, is_admin: u.is_admin, username: u.username ?? null });
+      })
+      .catch(() => toast.error("Could not load your account info"));
+
+    fetch(`${API_URL}/users/${user_id}/leaderboard-visibility`, { headers })
+      .then(r => r.json())
+      .then(visData => {
+        if (visData.show_on_leaderboard !== undefined) setShowOnLeaderboard(visData.show_on_leaderboard);
+      })
+      .catch(() => {});
   }, []);
 
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -52,7 +62,7 @@ export default function SettingsPage() {
     const token = localStorage.getItem("token");
     const user_id = localStorage.getItem("user_id");
     setChangingPassword(true);
-    const res = await fetch(`http://localhost:8000/users/${user_id}/password`, {
+    const res = await fetch(`${API_URL}/users/${user_id}/password`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -77,7 +87,7 @@ export default function SettingsPage() {
     const token = localStorage.getItem("token");
     const user_id = localStorage.getItem("user_id");
     setUpdatingUsername(true);
-    const res = await fetch(`http://localhost:8000/users/${user_id}/username`, {
+    const res = await fetch(`${API_URL}/users/${user_id}/username`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +111,7 @@ export default function SettingsPage() {
     const user_id = localStorage.getItem("user_id");
     setShowOnLeaderboard(value);
     setUpdatingVisibility(true);
-    const res = await fetch(`http://localhost:8000/users/${user_id}/leaderboard-visibility`, {
+    const res = await fetch(`${API_URL}/users/${user_id}/leaderboard-visibility`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -122,7 +132,7 @@ export default function SettingsPage() {
     const token = localStorage.getItem("token");
     const user_id = localStorage.getItem("user_id");
     setDeleting(true);
-    const res = await fetch(`http://localhost:8000/users/${user_id}`, {
+    const res = await fetch(`${API_URL}/users/${user_id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import styles from './Navbar.module.css';
+import { API_URL } from "@/app/lib/api";
+import styles from './navbar.module.css';
 import logo from "../logo.png";
 
 export default function Navbar() {
@@ -11,11 +12,11 @@ export default function Navbar() {
     const user_id = localStorage.getItem("user_id");
     if (!token || !user_id) return;
 
-    fetch(`http://localhost:8000/users/${user_id}`, {
+    fetch(`${API_URL}/users/${user_id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
-      .then(data => { if (data.user?.[3] === true) setIsAdmin(true); })
+      .then(data => { if (data.user?.is_admin === true) setIsAdmin(true); })
       .catch(() => {});
   }, []);
 

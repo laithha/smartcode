@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { API_URL } from "@/app/lib/api";
 import { useAuth } from "../../lib/useAuth";
 import "./style.css";
 
@@ -20,7 +21,7 @@ export default function LeaderboardPage() {
     const uid = localStorage.getItem("user_id");
     if (uid) setCurrentUserId(parseInt(uid));
 
-    fetch("http://localhost:8000/leaderboard")
+    fetch(`${API_URL}/leaderboard`)
       .then((res) => res.json())
       .then((data) => {
         setEntries(data.leaderboard ?? []);

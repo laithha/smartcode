@@ -7,14 +7,11 @@ class LessonService:
     def get_lesson_by_id(self, lesson_id):
         lessonID = self.repo.get_lessons_by_id(lesson_id)
         if lessonID is None:
-            raise Exception("there is no lesson with this id")
+            raise HTTPException(status_code=404, detail="there is no lesson with this id")
         return lessonID
-    
+
     def get_all_lessons(self):
-        lessons = self.repo.get_all_lessons()
-        if lessons is None:
-            raise Exception("there are no lessons")
-        return lessons
+        return self.repo.get_all_lessons()
     
     def create_lesson(self,title, description, content, language, difficulty, duration):
         createLesson = self.repo.create_lesson(title, description, content, language, difficulty, duration)

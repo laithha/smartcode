@@ -9,15 +9,17 @@ router = APIRouter()
 
 @router.get("/users/{id}", tags = ["userID"])
 def get_user_by_id(id: int, current_user = Depends(get_current_user)):
+    viewer = di.user_repo.get_user_by_id(int(current_user))
+    is_admin = viewer is not None and viewer[3] == True
+    if int(current_user) != id and not is_admin:
+        raise HTTPException(status_code=403, detail="Forbidden")
     service = di.get_user_service()
-    user = service.get_user_by_id(id)
-    return{"user": user}
+    return{"user": service.get_public_user_by_id(id)}
 
 @router.get("/users", tags = ["users"])
-def get_all_users(current_user = Depends(get_current_user)):
+def get_all_users(current_user = Depends(get_admin_user)):
     service = di.get_user_service()
-    users = service.get_all_users()
-    return{"users": users}
+    return{"users": service.get_all_public_users()}
 
 class LoginRequest(BaseModel):
     email: str

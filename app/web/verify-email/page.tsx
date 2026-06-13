@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { API_URL } from "@/app/lib/api";
 import "./style.css";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -26,7 +27,7 @@ export default function VerifyEmailPage() {
 
   const handleResend = async () => {
     setResending(true);
-    const res = await fetch("http://localhost:8000/resend-verification", {
+    const res = await fetch(`${API_URL}/resend-verification`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -68,7 +69,7 @@ export default function VerifyEmailPage() {
     const code = digits.join("");
     if (code.length < 6) { toast.error("Enter the full 6-digit code"); return; }
     setLoading(true);
-    const res = await fetch("http://localhost:8000/verify-email", {
+    const res = await fetch(`${API_URL}/verify-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, code }),

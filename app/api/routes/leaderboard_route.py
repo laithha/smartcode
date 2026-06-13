@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 import app.api.dependencies.di as di
 from app.api.dependencies.di import get_current_user
@@ -16,7 +16,6 @@ class LeaderboardVisibilityRequest(BaseModel):
 
 @router.put("/users/{user_id}/leaderboard-visibility", tags=["leaderboard"])
 def update_leaderboard_visibility(user_id: int, request: LeaderboardVisibilityRequest, current_user = Depends(get_current_user)):
-    from fastapi import HTTPException
     if int(current_user) != user_id:
         raise HTTPException(status_code=403, detail="Forbidden")
     service = di.get_user_service()
@@ -24,7 +23,6 @@ def update_leaderboard_visibility(user_id: int, request: LeaderboardVisibilityRe
 
 @router.get("/users/{user_id}/leaderboard-visibility", tags=["leaderboard"])
 def get_leaderboard_visibility(user_id: int, current_user = Depends(get_current_user)):
-    from fastapi import HTTPException
     if int(current_user) != user_id:
         raise HTTPException(status_code=403, detail="Forbidden")
     service = di.get_user_service()

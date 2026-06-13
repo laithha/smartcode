@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, Suspense } from "react";
+import { API_URL } from "@/app/lib/api";
 import "./style.css";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -46,7 +47,7 @@ function ResetPasswordContent() {
     if (code.length < 6) { toast.error("Enter the full 6-digit code"); return; }
     if (password !== confirm) { toast.error("Passwords do not match"); return; }
     setLoading(true);
-    const res = await fetch("http://localhost:8000/reset-password", {
+    const res = await fetch(`${API_URL}/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, code, new_password: password }),
