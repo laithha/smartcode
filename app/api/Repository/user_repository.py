@@ -1,4 +1,5 @@
 import psycopg2
+from app.api.database import db_lock
 
 class UserRepository:
 
@@ -9,24 +10,28 @@ class UserRepository:
     def _write(self, query, params):
         # Run a write (INSERT/UPDATE/DELETE) and commit. If it fails, roll the
         # transaction back so the shared connection stays usable for the next request.
-        try:
-            self.cursor.execute(query, params)
-            self.db.commit()
-        except Exception:
-            self.db.rollback()
-            raise
+        with db_lock:
+            try:
+                self.cursor.execute(query, params)
+                self.db.commit()
+            except Exception:
+                self.db.rollback()
+                raise
 
     def get_user_by_id(self, id):
-        self.cursor.execute("SELECT * FROM users WHERE id = %s", (id,))
-        return self.cursor.fetchone()
-    
+        with db_lock:
+            self.cursor.execute("SELECT * FROM users WHERE id = %s", (id,))
+            return self.cursor.fetchone()
+
     def get_all_users(self):
-        self.cursor.execute("select * from users")
-        return self.cursor.fetchall()
-    
+        with db_lock:
+            self.cursor.execute("select * from users")
+            return self.cursor.fetchall()
+
     def get_user_by_email(self,email):
-        self.cursor.execute("select * from users where email = %s", (email,))
-        return self.cursor.fetchone()
+        with db_lock:
+            self.cursor.execute("select * from users where email = %s", (email,))
+            return self.cursor.fetchone()
     
     def create_user(self, email, password):
         self._write("insert into users (email, password_hash) values(%s, %s)", (email, password))
@@ -44,11 +49,12 @@ class UserRepository:
         )
 
     def get_verification_info(self, email):
-        self.cursor.execute(
-            "SELECT verification_code, verification_expires FROM users WHERE email = %s",
-            (email,)
-        )
-        return self.cursor.fetchone()
+        with db_lock:
+            self.cursor.execute(
+                "SELECT verification_code, verification_expires FROM users WHERE email = %s",
+                (email,)
+            )
+            return self.cursor.fetchone()
 
     def mark_user_verified(self, email):
         self._write(
@@ -75,9 +81,10 @@ class UserRepository:
         )
 
     def get_leaderboard_visibility(self, user_id):
-        self.cursor.execute(
-            "SELECT show_on_leaderboard FROM users WHERE id = %s",
-            (user_id,)
-        )
-        row = self.cursor.fetchone()
-        return row[0] if row else None
+        with db_lock:
+            self.cursor.execute(
+                "SELECT show_on_leaderboard FROM users WHERE id = %s",
+                (user_id,)
+            )
+            row = self.cursor.fetchone()
+            return row[0] if row else None

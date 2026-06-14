@@ -1,0 +1,13 @@
+# Backend (FastAPI) Python dependencies for SmartCode
+# Install:  pip install -r requirements.txt
+# Run API:  uvicorn app.api.main:app --reload   (needs the Postgres container up: docker compose up -d)
+
+fastapi==0.135.1
+uvicorn[standard]==0.42.0
+pydantic==2.12.5
+psycopg2-binary==2.9.11
+passlib==1.7.4
+bcrypt==4.0.1
+python-jose[cryptography]==3.5.0
+python-dotenv==1.2.2
+anthropic==0.92.0

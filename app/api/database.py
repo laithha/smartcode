@@ -1,8 +1,11 @@
 import psycopg2
 import os
+import threading
 from dotenv import load_dotenv
 
 load_dotenv()
+
+db_lock = threading.Lock()
 
 try:
     conn = psycopg2.connect(
