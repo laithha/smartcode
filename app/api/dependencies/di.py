@@ -1,4 +1,3 @@
-from app.api.database import conn
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from app.api.auth import verify_token
@@ -16,17 +15,17 @@ from app.api.service.leaderboard_service import LeaderboardService
 from app.api.Repository.submissions_repository import SubmissionsRepository
 from app.api.service.submissions_service import SubmissionsService
 ai_service = AIService()
-tip_repo = TipRepository(conn)
+tip_repo = TipRepository()
 tip_service = TipService(tip_repo)
-user_repo = UserRepository(conn)
+user_repo = UserRepository()
 user_service = UserService(user_repo)
-lesson_repo = LessonRepository(conn)
+lesson_repo = LessonRepository()
 lesson_service = LessonService(lesson_repo)
-progress_repo = ProgressRepository(conn)
+progress_repo = ProgressRepository()
 progress_service = ProgressService(progress_repo, lesson_repo)
-leaderboard_repo = LeaderboardRepository(conn)
+leaderboard_repo = LeaderboardRepository()
 leaderboard_service = LeaderboardService(leaderboard_repo)
-submissions_repo = SubmissionsRepository(conn)
+submissions_repo = SubmissionsRepository()
 submissions_service = SubmissionsService(submissions_repo)
 def get_user_service() ->UserService:
     return user_service

@@ -152,18 +152,6 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* CTA */}
-            <section className="hv2-section">
-                <div className="hv2-wrap">
-                    <motion.div className="hv2-cta-box" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                        <div className="hv2-cta-top-line" />
-                        <h2>Ready to Start Your Coding Journey?</h2>
-                        <p>Join thousands of learners mastering programming skills. No credit card required.</p>
-                        <a href="/web/register" className="hv2-btn-primary">Create Free Account</a>
-                    </motion.div>
-                </div>
-            </section>
-
             {/* Footer */}
             <footer className="hv2-footer">
                 <div className="hv2-wrap hv2-footer-inner">

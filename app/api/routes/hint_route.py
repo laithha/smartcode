@@ -15,6 +15,7 @@ class HintRequest(BaseModel):
     lesson_title: str = Field(..., max_length=200)
     lesson_description: str = Field(..., max_length=1000)
     language: str = Field(..., max_length=50)
+    lesson_task: str = Field("", max_length=2000)
     conversation_history: Optional[List[Message]] = []
 
 @router.post("/ai-hint", tags=["hint"])
@@ -25,6 +26,7 @@ def ask_hint(request: HintRequest, current_user = Depends(get_current_user)):
         request.lesson_title,
         request.lesson_description,
         request.language,
-        history
+        history,
+        request.lesson_task
     )
     return {"answer": answer}

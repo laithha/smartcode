@@ -1,14 +1,11 @@
-import psycopg2
-from app.api.database import db_lock
+from app.api.database import get_cursor
+
 
 class LeaderboardRepository:
-    def __init__(self, db_connection):
-        self.db = db_connection
-        self.cursor = self.db.cursor()
 
     def get_leaderboard(self):
-        with db_lock:
-            self.cursor.execute("""
+        with get_cursor() as cursor:
+            cursor.execute("""
                 SELECT u.id, COALESCE(u.username, split_part(u.email, '@', 1)), COUNT(p.progress_id) as completed_count
                 FROM users u
                 LEFT JOIN progress p ON u.id = p.user_id AND p.status = 'completed'
@@ -16,4 +13,4 @@ class LeaderboardRepository:
                 GROUP BY u.id, u.username, u.email
                 ORDER BY completed_count DESC
             """)
-            return self.cursor.fetchall()
+            return cursor.fetchall()

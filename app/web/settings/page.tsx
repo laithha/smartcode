@@ -22,7 +22,7 @@ export default function SettingsPage() {
   const [changingPassword, setChangingPassword] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [showOnLeaderboard, setShowOnLeaderboard] = useState(true);
+  const [showOnLeaderboard, setShowOnLeaderboard] = useState(false);
   const [updatingVisibility, setUpdatingVisibility] = useState(false);
   const [newUsername, setNewUsername] = useState("");
   const [updatingUsername, setUpdatingUsername] = useState(false);
@@ -35,23 +35,36 @@ export default function SettingsPage() {
 
     const headers = { Authorization: `Bearer ${token}` };
 
+    // If the token is expired/invalid the backend returns 401 — treat that as a
+    // dead session: clear it and send the user back to login (otherwise the page
+    // would silently show stale/default values).
+    const guard = (r: Response) => {
+      if (r.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user_id");
+        router.replace("/web/login");
+        throw new Error("session expired");
+      }
+      return r.json();
+    };
+
     // Load account info and leaderboard visibility independently, so one failing
     // request never blanks the whole page (e.g. email staying blank).
     fetch(`${API_URL}/users/${user_id}`, { headers })
-      .then(r => r.json())
+      .then(guard)
       .then(userData => {
         const u = userData.user;
         if (u) setUser({ id: u.id, email: u.email, is_admin: u.is_admin, username: u.username ?? null });
       })
-      .catch(() => toast.error("Could not load your account info"));
+      .catch(() => {});
 
     fetch(`${API_URL}/users/${user_id}/leaderboard-visibility`, { headers })
-      .then(r => r.json())
+      .then(guard)
       .then(visData => {
         if (visData.show_on_leaderboard !== undefined) setShowOnLeaderboard(visData.show_on_leaderboard);
       })
       .catch(() => {});
-  }, []);
+  }, [router]);
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();

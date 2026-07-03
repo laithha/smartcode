@@ -10,7 +10,7 @@ secret = os.getenv("SECRET_KEY")
 def create_access_token(user_id):
     payload = {
         "sub" : str(user_id),
-        "exp" : datetime.utcnow() + timedelta(hours=1)
+        "exp" : datetime.utcnow() + timedelta(hours=24)
     }
     result = jwt.encode(payload, secret, algorithm="HS256")
     return result

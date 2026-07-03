@@ -1,16 +1,28 @@
 "use client";
-import { useState } from "react";
 import { API_URL } from "@/app/lib/api";
 import { ChatMessage, Lesson } from "../utils";
 
 interface Props {
     lesson: Lesson;
+    lessonTask: string;
+    chatMessages: ChatMessage[];
+    setChatMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
+    chatInput: string;
+    setChatInput: (value: string) => void;
+    chatLoading: boolean;
+    setChatLoading: (value: boolean) => void;
 }
 
-export default function ChatInterface({ lesson }: Props) {
-    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-    const [chatInput, setChatInput] = useState("");
-    const [chatLoading, setChatLoading] = useState(false);
+export default function ChatInterface({
+    lesson,
+    lessonTask,
+    chatMessages,
+    setChatMessages,
+    chatInput,
+    setChatInput,
+    chatLoading,
+    setChatLoading,
+}: Props) {
 
     const sendHint = async () => {
         if (!chatInput.trim() || chatLoading) return;
@@ -29,6 +41,7 @@ export default function ChatInterface({ lesson }: Props) {
                     question,
                     lesson_title: lesson.title,
                     lesson_description: lesson.description,
+                    lesson_task: lessonTask,
                     language: lesson.language,
                     conversation_history: history,
                 }),

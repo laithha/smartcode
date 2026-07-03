@@ -31,8 +31,6 @@ class UserService:
 
     @staticmethod
     def _public_user(row):
-        # Map a raw users row to a safe dict. NEVER include password_hash or the
-        # verification code/expiry — those must never leave the backend.
         return {
             "id": row[0],
             "email": row[1],

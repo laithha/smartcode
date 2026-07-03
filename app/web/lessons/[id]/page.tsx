@@ -1,13 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { API_URL } from "@/app/lib/api";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Editor from "@monaco-editor/react";
 import ReviewModal from "./components/ReviewModal";
 import ChatInterface from "./components/ChatInterface";
 import SubmissionHistory from "./components/SubmissionHistory";
+import HintAccordion from "./components/HintAccordion";
 import toast from "react-hot-toast";
-import { MONACO_LANG_MAP, Lesson, ReviewResult, Recommendation, Tip, Submission, renderTheory } from "./utils";
+import { MONACO_LANG_MAP, Lesson, ReviewResult, Recommendation, Tip, Submission, ChatMessage, renderTheory } from "./utils";
 import { langConf, diffConf } from "../../../lib/constants";
 import { useAuth } from "../../../lib/useAuth";
 import "./style.css";
@@ -28,7 +29,13 @@ export default function LessonPage() {
     const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
     const [activeTab, setActiveTab] = useState<Tab>("theory");
     const [submissions, setSubmissions] = useState<Submission[]>([]);
+    // AI tutor chat state lives here (not inside ChatInterface) so the
+    // conversation survives switching between tabs.
+    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [chatInput, setChatInput] = useState("");
+    const [chatLoading, setChatLoading] = useState(false);
     const { id } = useParams();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchLesson = async () => {
@@ -111,6 +118,13 @@ export default function LessonPage() {
                     lesson_task: taskTips.map(t => t.message).join("\n"),
                 }),
             });
+            if (reviewRes.status === 401) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user_id");
+                toast.error("Your session has expired. Please log in again.");
+                router.replace("/web/login");
+                return;
+            }
             const result: ReviewResult = (await reviewRes.json()).feedback;
             setReviewResult(result);
             setShowModal(true);
@@ -249,20 +263,23 @@ export default function LessonPage() {
                         )}
 
                         {activeTab === "hints" && (
-                            <div className="v2-content-body">
-                                {hintTips.length > 0
-                                    ? hintTips.map((t, i) => (
-                                        <div key={t.tip_id} className="v2-hint-card">
-                                            <span className="v2-hint-num">Hint {i + 1}</span>
-                                            <p>{t.message}</p>
-                                        </div>
-                                    ))
-                                    : <p className="v2-empty">No hints available yet.</p>
-                                }
-                            </div>
+                            hintTips.length > 0
+                                ? <HintAccordion hints={hintTips} />
+                                : <div className="v2-content-body"><p className="v2-empty">No hints available yet.</p></div>
                         )}
 
-                        {activeTab === "askai" && <ChatInterface lesson={lesson} />}
+                        {activeTab === "askai" && (
+                            <ChatInterface
+                                lesson={lesson}
+                                lessonTask={taskTips.map(t => t.message).join("\n")}
+                                chatMessages={chatMessages}
+                                setChatMessages={setChatMessages}
+                                chatInput={chatInput}
+                                setChatInput={setChatInput}
+                                chatLoading={chatLoading}
+                                setChatLoading={setChatLoading}
+                            />
+                        )}
 
                         {activeTab === "history" && (
                             <div className="v2-content-body">
@@ -296,7 +313,6 @@ export default function LessonPage() {
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M4 17l6-6-6-6M12 19h8" /></svg>
                                 Output
                             </span>
-                            {output && <span className={`v2-output-status ${output.success ? "v2-status-ok" : "v2-status-err"}`}>{output.success ? "● Passed" : "● Error"}</span>}
                         </div>
                         <pre className={`v2-output-pre ${output && !output.success ? "v2-output-error" : ""}`}>
                             {running ? "Running..." : output?.text || "Click ▶ Run to execute your code"}

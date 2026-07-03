@@ -21,18 +21,21 @@ class AIService:
                 text = text[4:]
         return json.loads(text.strip())
 
-    def ask_hint(self, question, lesson_title, lesson_description, language, conversation_history=None):
+    def ask_hint(self, question, lesson_title, lesson_description, language, conversation_history=None, lesson_task=""):
+        task_section = f"The exact problem the student must solve:\n{lesson_task}\n\n" if lesson_task else ""
         system_prompt = (
             f"You are a programming tutor helping a student with the lesson: '{lesson_title}'.\n"
             f"Lesson description: {lesson_description}\n"
             f"Language: {language}\n\n"
+            f"{task_section}"
             "STRICT RULES you must always follow:\n"
             "- NEVER write the solution code for the student. Not even partial solutions.\n"
             "- NEVER complete their code or show them how to implement the answer.\n"
             "- If the student asks for the solution directly, kindly refuse and guide them instead.\n"
             "- Instead: explain concepts, ask guiding questions, give hints about the approach, explain relevant syntax.\n"
             "- Keep responses short and helpful (2-4 sentences max).\n"
-            "- Be encouraging and friendly."
+            "- Be encouraging and friendly.\n"
+            "- Reply in plain text only. Do NOT use any markdown formatting: no ** for bold, no # headers, and no bullet symbols."
         )
         messages = list(conversation_history) if conversation_history else []
         messages.append({"role": "user", "content": question})
@@ -42,4 +45,4 @@ class AIService:
             system=system_prompt,
             messages=messages
         )
-        return response.content[0].text.strip()
+        return response.content[0].text.strip().replace("**", "")

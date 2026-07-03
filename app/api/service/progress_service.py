@@ -25,11 +25,17 @@ class ProgressService:
     def get_streak(self, user_id):
         rows = self.repo.get_completed_dates(user_id)
         dates = sorted(set(row[0] for row in rows), reverse=True)
-        streak = 0
-        for i in range(len(dates)):
-            if i == 0:
-                streak = 1
-            elif (dates[i-1] - dates[i]).days == 1:
+        if not dates:
+            return 0
+        # The streak is only "alive" if the most recent completed lesson was
+        # today or yesterday. If the last activity is older than that, a day was
+        # missed, so the streak has expired and resets to 0.
+        if (date.today() - dates[0]).days > 1:
+            return 0
+        # Count backwards from the most recent day, stopping at the first gap.
+        streak = 1
+        for i in range(1, len(dates)):
+            if (dates[i - 1] - dates[i]).days == 1:
                 streak += 1
             else:
                 break
