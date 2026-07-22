@@ -29,8 +29,6 @@ export default function LessonPage() {
     const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
     const [activeTab, setActiveTab] = useState<Tab>("theory");
     const [submissions, setSubmissions] = useState<Submission[]>([]);
-    // AI tutor chat state lives here (not inside ChatInterface) so the
-    // conversation survives switching between tabs.
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const [chatInput, setChatInput] = useState("");
     const [chatLoading, setChatLoading] = useState(false);

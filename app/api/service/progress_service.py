@@ -27,12 +27,9 @@ class ProgressService:
         dates = sorted(set(row[0] for row in rows), reverse=True)
         if not dates:
             return 0
-        # The streak is only "alive" if the most recent completed lesson was
-        # today or yesterday. If the last activity is older than that, a day was
-        # missed, so the streak has expired and resets to 0.
+  
         if (date.today() - dates[0]).days > 1:
             return 0
-        # Count backwards from the most recent day, stopping at the first gap.
         streak = 1
         for i in range(1, len(dates)):
             if (dates[i - 1] - dates[i]).days == 1:
